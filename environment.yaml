@@ -1,0 +1,14 @@
+name: flask-dashboard
+channels:
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies:
+  - flask
+  - flask-login
+  - flask-migrate
+  - flask-wtf
+  - flask-sqlalchemy=2.*
+  - email-validator
+  - python-decouple
+  - gunicorn
