@@ -42,13 +42,13 @@ d.addEventListener("DOMContentLoaded", function(event) {
     if(iconNotifications) {
         var unreadNotifications = d.querySelector('.unread-notifications');
         var bellShake = d.querySelector('.bell-shake');
-    
+
         if (iconNotifications.getAttribute('data-unread-notifications') === 'true') {
             unreadNotifications.style.display = 'block';
         } else {
             unreadNotifications.style.display = 'none';
         }
-    
+
         // bell shake
         var shakingInterval = setInterval(function() {
             if (iconNotifications.getAttribute('data-unread-notifications') === 'true') {
@@ -59,7 +59,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
                 }
             }
         }, 5000);
-    
+
         iconNotifications.addEventListener('show.bs.dropdown', function () {
             bellShake.setAttribute('data-unread-notifications', false);
             clearInterval(shakingInterval);
@@ -177,6 +177,36 @@ d.addEventListener("DOMContentLoaded", function(event) {
         });
     }
 
+    if(d.querySelector('.ct-chart-test')) {
+        //Chart 5
+          new Chartist.Line('.ct-chart-test', {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            series: [
+                [0, 10, 30, 40, 80, 60, 120]
+            ]
+          }, {
+            low: 0,
+            showArea: true,
+            fullWidth: true,
+            plugins: [
+              Chartist.plugins.tooltip()
+            ],
+            axisX: {
+                // On the x-axis start means top and end means bottom
+                position: 'end',
+                showGrid: true
+            },
+            axisY: {
+                // On the y-axis start means left and end means right
+                showGrid: false,
+                showLabel: false,
+                labelInterpolationFnc: function(value) {
+                    return '$' + (value / 1) + 'k';
+                }
+            }
+        });
+    }
+
     if(d.querySelector('.ct-chart-ranking')) {
         var chart = new Chartist.Bar('.ct-chart-ranking', {
             labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -201,7 +231,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
                 offset: 0
             }
             });
-          
+
           chart.on('draw', function(data) {
             if(data.type === 'line' || data.type === 'area') {
               data.element.animate({
@@ -221,13 +251,13 @@ d.addEventListener("DOMContentLoaded", function(event) {
         var data = {
             series: [70, 20, 10]
           };
-          
+
           var sum = function(a, b) { return a + b };
-          
+
           new Chartist.Pie('.ct-chart-traffic-share', data, {
             labelInterpolationFnc: function(value) {
               return Math.round(value / data.series.reduce(sum) * 100) + '%';
-            },            
+            },
             low: 0,
             high: 8,
             donut: true,
@@ -238,7 +268,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
             plugins: [
               Chartist.plugins.tooltip()
             ],
-        });         
+        });
     }
 
     if (d.getElementById('loadOnClick')) {
@@ -246,10 +276,10 @@ d.addEventListener("DOMContentLoaded", function(event) {
             var button = this;
             var loadContent = d.getElementById('extraContent');
             var allLoaded = d.getElementById('allLoadedText');
-    
+
             button.classList.add('btn-loading');
             button.setAttribute('disabled', 'true');
-    
+
             setTimeout(function () {
                 loadContent.style.display = 'block';
                 button.style.display = 'none';

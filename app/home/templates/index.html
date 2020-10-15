@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Dashboard {% endblock %} 
+{% block title %} Dashboard {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -11,9 +11,11 @@
 
         {% include 'includes/navigation.html' %}
 
+        <!-- The animated volt logo
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
             <img class="loader-element animate__animated animate__jackInTheBox" src="/static/assets/img/brand/light.svg" height="60" alt="Volt logo">
         </div>
+        -->
 
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
             <div class="btn-toolbar dropdown">
@@ -36,14 +38,14 @@
 
         <div class="row justify-content-md-center">
             <div class="col-12 mb-4">
-                <div class="card bg-yellow-alt shadow-sm">
+                <div class="card bg-white-alt shadow-sm">
                     <div class="card-header d-flex flex-row align-items-center flex-0">
                         <div class="d-block">
-                            <div class="h5 font-weight-normal mb-2">Sales Value</div>
-                            <h2 class="h3">$10,567</h2>
-                            <div class="small mt-2"> 
-                                <span class="font-weight-bold mr-2">Yesterday</span>                              
-                                <span class="fas fa-angle-up text-success"></span>                                   
+                            <div class="h5 font-weight-normal mb-2">Workflow History</div>
+                            <h2 class="h3">15,842</h2>
+                            <div class="small mt-2">
+                                <span class="font-weight-bold mr-2">This Month</span>
+                                <span class="fas fa-angle-up text-success"></span>
                                 <span class="text-success font-weight-bold">10.57%</span>
                             </div>
                         </div>
@@ -53,7 +55,7 @@
                         </div>
                     </div>
                     <div class="card-body p-2">
-                        <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
+                        <div class="ct-chart-sales-value ct-double-octave ct-series-a"></div>
                     </div>
                 </div>
             </div>
@@ -64,18 +66,18 @@
                             <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
                                 <div class="icon icon-shape icon-md icon-shape-blue rounded mr-4 mr-sm-0"><span class="fas fa-chart-line"></span></div>
                                 <div class="d-sm-none">
-                                    <h2 class="h5">Customers</h2>
-                                    <h3 class="mb-1">345,678</h3>
+                                    <h2 class="h5">Tracked Jobs</h2>
+                                    <h3 class="mb-1">15,842</h3>
                                 </div>
                             </div>
                             <div class="col-12 col-xl-7 px-xl-0">
                                 <div class="d-none d-sm-block">
-                                    <h2 class="h5">Customers</h2>
-                                    <h3 class="mb-1">345k</h3>
+                                    <h2 class="h5">Tracked Jobs</h2>
+                                    <h3 class="mb-1">15k</h3>
                                 </div>
-                                <small>Feb 1 - Apr 1,  <span class="icon icon-small"><span class="fas fa-globe-europe"></span></span> WorldWide</small> 
-                                <div class="small mt-2">                               
-                                    <span class="fas fa-angle-up text-success"></span>                                   
+                                <small>Feb 1 - Apr 1,  <span class="icon icon-small"><span class="fas fa-globe-europe"></span></span> WorldWide</small>
+                                <div class="small mt-2">
+                                    <span class="fas fa-angle-up text-success"></span>
                                     <span class="text-success font-weight-bold">18.2%</span> Since last month
                                 </div>
                             </div>
@@ -88,46 +90,19 @@
                     <div class="card-body">
                         <div class="row d-block d-xl-flex align-items-center">
                             <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                <div class="icon icon-shape icon-md icon-shape-secondary rounded mr-4"><span class="fas fa-cash-register"></span></div>
-                                <div class="d-sm-none">
-                                    <h2 class="h5">Revenue</h2>
-                                    <h3 class="mb-1">$43,594</h3>
-                                </div>
+                                <div class="ct-chart-traffic-share ct-series-a"></div>
                             </div>
                             <div class="col-12 col-xl-7 px-xl-0">
-                                <div class="d-none d-sm-block">
-                                    <h2 class="h5">Revenue</h2>
-                                    <h3 class="mb-1">$43,594</h3>
-                                </div>
-                                <small>Feb 1 - Apr 1,  <span class="icon icon-small"><span class="fas fa-globe-europe"></span></span> Worldwide</small>
-                                <div class="small mt-2">                               
-                                    <span class="fas fa-angle-up text-success"></span>                                   
-                                    <span class="text-success font-weight-bold">28.2%</span> Since last month
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-xl-4 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-body">
-                        <div class="row d-block d-xl-flex align-items-center">
-                            <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                <div class="ct-chart-traffic-share ct-golden-section ct-series-a"></div>
-                            </div>
-                            <div class="col-12 col-xl-7 px-xl-0">
-                                <h2 class="h5 mb-3">Traffic Share</h2>
-                                <h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-secondary mr-1"><span class="fas fa-desktop"></span></span> Desktop <a href="#" class="h6">60%</a></h6>
-                                <h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-primary mr-1"><span class="fas fa-mobile-alt"></span></span> Mobile Web <a href="#" class="h6">30%</a></h6>
-                                <h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-tertiary mr-1"><span class="fas fa-tablet-alt"></span></span> Tablet Web <a href="#" class="h6">10%</a></h6>
+                                <h2 class="h5 mb-3">System Share</h2>
+                                <h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-secondary mr-1"><span class="fas fa-desktop"></span></span> Infoserv <a href="#" class="h6">60%</a></h6>
+                                <h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-primary mr-1"><span class="fas fa-mobile-alt"></span></span> Compute Canada <a href="#" class="h6">30%</a></h6>
+                                <h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-tertiary mr-1"><span class="fas fa-tablet-alt"></span></span> Github Actions <a href="#" class="h6">10%</a></h6>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-12 col-xl-8 mb-4">
                 <div class="row">
@@ -242,12 +217,12 @@
                                         <div class="col-auto">
                                             <!-- Avatar -->
                                             <a href="#" class="user-avatar">
-                                                <img class="rounded-circle" alt="Image placeholder" src="/static/assets/img/team/profile-picture-1.jpg">
+                                                <img class="rounded-circle" alt="Image placeholder" src="/static/assets/img/team/profile-ktmeaton.jpg">
                                             </a>
                                         </div>
                                         <div class="col-auto ml--2">
                                             <h4 class="h6 mb-0">
-                                                <a href="#">Christopher Wood</a>
+                                                <a href="#">Katherine Eaton</a>
                                             </h4>
                                             <span class="text-success">●</span>
                                             <small>Online</small>
@@ -255,66 +230,6 @@
                                         <div class="col text-right">
                                             <a href="#" class="btn btn-sm btn-tertiary"><i class="fas fa-calendar-check mr-1"></i> Invite</a>
                                         </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        <div class="row align-items-center">
-                                            <div class="col-auto">
-                                                <!-- Avatar -->
-                                                <a href="#" class="user-avatar">
-                                                    <img class="rounded-circle" alt="Image placeholder" src="/static/assets/img/team/profile-picture-2.jpg">
-                                                </a>
-                                            </div>
-                                            <div class="col-auto ml--2">
-                                                <h4 class="h6 mb-0">
-                                                    <a href="#">Jose Leos</a>
-                                                </h4>
-                                                <span class="text-warning">●</span>
-                                                <small>In a meeting</small>
-                                            </div>
-                                            <div class="col text-right">
-                                                <a href="#" class="btn btn-sm btn-tertiary"><i class="fas fa-comment mr-1"></i> Message</a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        <div class="row align-items-center">
-                                            <div class="col-auto">
-                                                <!-- Avatar -->
-                                                <a href="#" class="user-avatar">
-                                                    <img class="rounded-circle" alt="Image placeholder" src="/static/assets/img/team/profile-picture-3.jpg">
-                                                </a>
-                                            </div>
-                                            <div class="col-auto ml--2">
-                                                <h4 class="h6 mb-0">
-                                                    <a href="#">Bonnie Green</a>
-                                                </h4>
-                                                <span class="text-danger">●</span>
-                                                <small>Offline</small>
-                                            </div>
-                                            <div class="col text-right">
-                                                <a href="#" class="btn btn-sm btn-tertiary"><i class="fas fa-calendar-check mr-1"></i> Invite</a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        <div class="row align-items-center">
-                                            <div class="col-auto">
-                                                <!-- Avatar -->
-                                                <a href="#" class="user-avatar">
-                                                    <img class="rounded-circle" alt="Image placeholder" src="/static/assets/img/team/profile-picture-4.jpg">
-                                                </a>
-                                            </div>
-                                            <div class="col-auto ml--2">
-                                            <h4 class="h6 mb-0">
-                                                    <a href="#">Neil Sims</a>
-                                            </h4>
-                                            <span class="text-success">●</span>
-                                            <small>Online</small>
-                                            </div>
-                                            <div class="col text-right">
-                                                <a href="#" class="btn btn-sm btn-tertiary"><i class="fas fa-comment mr-1"></i> Message</a>
-                                            </div>
                                         </div>
                                     </li>
                                 </ul>
@@ -419,8 +334,8 @@
                             <div class="d-block">
                                 <div class="h6 font-weight-normal text-gray mb-2">Total orders</div>
                                 <h2 class="h3">452</h2>
-                                <div class="small mt-2">                               
-                                    <span class="fas fa-angle-up text-success"></span>                                   
+                                <div class="small mt-2">
+                                    <span class="fas fa-angle-up text-success"></span>
                                     <span class="text-success font-weight-bold">18.2%</span>
                                 </div>
                             </div>
@@ -506,4 +421,5 @@
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+{% endblock javascripts %}

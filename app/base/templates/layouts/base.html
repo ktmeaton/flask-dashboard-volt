@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head> 
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!-- Primary Meta Tags -->
@@ -81,21 +81,20 @@
             </button>
         </div>
     </nav>
-
     <div class="container-fluid bg-soft">
         <div class="row">
             <div class="col-12">
 
-                {% include 'includes/sidebar.html' %}
-            
+                //{% include 'includes/sidebar.html' %}
+
                 {% block content %}{% endblock content %}
 
             </div>
         </div>
     </div>
 
-    {% include 'includes/scripts.html' %}    
-    
+    {% include 'includes/scripts.html' %}
+
     <!-- Specific Page JS goes HERE  -->
     {% block javascripts %}{% endblock javascripts %}
 
