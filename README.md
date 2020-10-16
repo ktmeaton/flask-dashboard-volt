@@ -19,7 +19,6 @@ export FLASK_ENV=development
 
 # Start the app
 flask run --host=0.0.0.0 --port=5000
-
 # Access the dashboard in browser: http://127.0.0.1:5000/
 ```
 
@@ -28,6 +27,7 @@ flask run --host=0.0.0.0 --port=5000
 The app is provided with a basic configuration to be executed in [Docker](https://www.docker.com/), [Heroku](https://www.heroku.com/), [Gunicorn](https://gunicorn.org/), and [Waitress](https://docs.pylonsproject.org/projects/waitress/en/stable/).
 
 ### [Heroku](https://www.heroku.com/)
+
 ---
 
 Steps to deploy on **Heroku**
@@ -58,7 +58,12 @@ heroku open
 
 > Note, you may need to export the variable BROWSER which points to the executable for your web browser.
 
+```bash
+export BROWSER="/mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe"
+```
+
 ### [Gunicorn](https://gunicorn.org/)
+
 ---
 
 Gunicorn 'Green Unicorn' is a Python WSGI HTTP Server for UNIX.
@@ -66,12 +71,13 @@ Gunicorn 'Green Unicorn' is a Python WSGI HTTP Server for UNIX.
 > Start the app using gunicorn binary
 
 ```bash
-$ gunicorn --bind 0.0.0.0:8001 run:app
+gunicorn --bind 0.0.0.0:8001 run:app
 ```
 
 Visit `http://localhost:8001` in your browser. The app should be up & running.
 
 ### [Waitress](https://docs.pylonsproject.org/projects/waitress/en/stable/)
+
 ---
 
 > Start the app using [waitress-serve](https://docs.pylonsproject.org/projects/waitress/en/stable/runner.html).
@@ -83,6 +89,7 @@ waitress-serve --port=8001 run:app
 Visit `http://localhost:8001` in your browser. The app should be up & running.
 
 ### [Docker](https://www.docker.com/) execution
+
 ---
 
 The application can be easily executed in a docker container. The steps:
