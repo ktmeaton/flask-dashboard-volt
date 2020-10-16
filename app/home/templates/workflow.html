@@ -11,7 +11,40 @@
 
         {% include 'includes/navigation.html' %}
 
-        <button class="btn btn-info" id="notifyTopLeft">Top left info</button>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+            {% autoescape false %}
+            <script>
+              document.addEventListener("DOMContentLoaded", function(){
+              const notyf = new Notyf({
+                  position: {
+                      x: 'right',
+                      y: 'bottom',
+                  },
+                  types: [
+                      {
+                          type: 'info',
+                          background: 'blue',
+                          icon: {
+                              className: 'fas fa-info-circle',
+                              tagName: 'span',
+                              color: '#fff'
+                          },
+                          dismissible: true
+                      }
+                  ]
+              });
+              notyf.open({
+                  type: 'info',
+                  message: '{{message}}'
+              });
+            });
+            </script>
+            {% endautoescape %}
+          {% endfor %}
+          {% endif %}
+        {% endwith %}
 
         <!-- The animated volt logo
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
@@ -115,7 +148,7 @@
   document.addEventListener("DOMContentLoaded", function(){
   const notyf = new Notyf({
       position: {
-          x: 'right',
+          x: 'left',
           y: 'bottom',
       },
       types: [

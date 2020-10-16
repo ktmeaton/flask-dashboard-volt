@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Database Enter {% endblock %}
+{% block title %} Database{% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -11,7 +11,13 @@
 
         {% include 'includes/navigation.html' %}
 
-        <button class="btn btn-info" id="notifyTopLeft">Top left info</button>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+            <button class="btn btn-info" id="flashButton">{{message}}</button>
+          {% endfor %}
+          {% endif %}
+        {% endwith %}
 
         <!-- The animated volt logo
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
@@ -25,10 +31,10 @@
                     <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
                         <li class="breadcrumb-item"><a href="index"><span class="fas fa-home"></span></a></li>
                         <li class="breadcrumb-item"><a href="#">flowdash-bio</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Database Enter</li>
+                        <li class="breadcrumb-item active" aria-current="page">Database</li>
                     </ol>
                 </nav>
-                <h2 class="h4">Database Enter</h2>
+                <h2 class="h4">Database</h2>
                 <p class="mb-0">Enter workflows into the database.</p>
             </div>
             <div class="btn-toolbar mb-2 mb-md-0">
@@ -66,6 +72,16 @@
             </div>
         </div>
 
+        <div class="col-16 d-flex align-items-center">
+            {% import "bootstrap/wtf.html" as wtf %}
+            <form action="" method="post" class="form" role="form">
+              {{ form.csrf_token() }}
+              {{ wtf.form_field(form.system, class='form-control', type='text', placeholder='Enter System') }}
+              {{ wtf.form_field(form.node, class='form-control', type='text', placeholder='Enter Node') }}
+              {{ wtf.form_field(form.jobs, class='form-control', type='number', placeholder='Enter Jobs') }}
+             <input type=submit class='btn btn-info btn-block mt-3'>
+            </form>
+        </div>
         {% include 'includes/footer.html' %}
 
     </main>
