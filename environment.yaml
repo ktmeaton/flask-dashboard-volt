@@ -1,14 +1,17 @@
-name: flask-dashboard
+name: flowdash-bio
 channels:
   - conda-forge
   - anaconda
   - defaults
 dependencies:
-  - flask
-  - flask-login
-  - flask-migrate
-  - flask-wtf
+  - python=3.8
+  - flask=1.1.2
+  - flask-login=0.5.0
+  - flask-migrate=2.4.0
+  - flask-wtf=0.14.3
   - flask-sqlalchemy=2.*
-  - email-validator
-  - python-decouple
-  - gunicorn
+  - email-validator=1.1.1
+  - python-decouple=3.3
+  - gunicorn=20.0.4
+  - waitress=1.4.3
+  - python-dotenv=0.14.0
