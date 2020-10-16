@@ -11,13 +11,6 @@
 
         {% include 'includes/navigation.html' %}
 
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-            <button class="btn btn-info" id="flashButton">{{message}}</button>
-          {% endfor %}
-          {% endif %}
-        {% endwith %}
 
         <!-- The animated volt logo
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
@@ -74,11 +67,11 @@
 
         <div class="col-16 d-flex align-items-center">
             {% import "bootstrap/wtf.html" as wtf %}
-            <form action="" method="post" class="form" role="form">
+            <form action="{{url_for('home_blueprint.route_database_enter')}}"method="post" class="form" role="form">
               {{ form.csrf_token() }}
               {{ wtf.form_field(form.system, class='form-control', type='text', placeholder='Enter System') }}
               {{ wtf.form_field(form.node, class='form-control', type='text', placeholder='Enter Node') }}
-              {{ wtf.form_field(form.jobs, class='form-control', type='number', placeholder='Enter Jobs') }}
+              {{ wtf.form_field(form.total_jobs, class='form-control', type='number', placeholder='Enter Jobs') }}
              <input type=submit class='btn btn-info btn-block mt-3'>
             </form>
         </div>

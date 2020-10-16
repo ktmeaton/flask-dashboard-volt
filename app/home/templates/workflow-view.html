@@ -1,0 +1,183 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Workflows {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<!-- Datatables -->
+<link rel="stylesheet" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css"></style>
+<script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <main class="content">
+
+        {% include 'includes/navigation.html' %}
+
+        <!-- The animated volt logo
+        <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+            <img class="loader-element animate__animated animate__jackInTheBox" src="/static/assets/img/brand/light.svg" height="60" alt="Volt logo">
+        </div>
+        -->
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <div class="d-block mb-4 mb-md-0">
+                <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+                    <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                        <li class="breadcrumb-item"><a href="index"><span class="fas fa-home"></span></a></li>
+                        <li class="breadcrumb-item"><a href="#">flowdash-bio</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Workflows</li>
+                    </ol>
+                </nav>
+                <h2 class="h4">All Workflows</h2>
+                <p class="mb-0">Bioinformatic Workflow Dashboard.</p>
+            </div>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-primary">Share</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary">Export</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-settings mb-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col col-md-6 col-lg-3 col-xl-4">
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon2"><span class="fas fa-search"></span></span>
+                        <input type="text" class="form-control" id="exampleInputIconLeft" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2">
+                    </div>
+                </div>
+                <div class="col-4 col-md-2 col-xl-1 pl-md-0 text-right">
+                    <div class="btn-group">
+                        <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="icon icon-sm icon-gray">
+                                <span class="fas fa-cog"></span>
+                            </span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
+                            <span class="dropdown-item font-weight-bold text-dark">Show</span>
+                            <a class="dropdown-item d-flex font-weight-bold" href="#">10 <span class="icon icon-small ml-auto"><span class="fas fa-check"></span></span></a>
+                            <a class="dropdown-item font-weight-bold" href="#">20</a>
+                            <a class="dropdown-item font-weight-bold" href="#">30</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-body border-light shadow-sm table-wrapper table-responsive pt-0">
+            <table class="table table-hover" id="workflowTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>System</th>
+                        <th>Node</th>
+                        <th>Status</th>
+                        <th>Progress</th>
+                        <th>Total Jobs</th>
+                        <th>Completed Jobs</th>
+                        <th>Running Jobs</th>
+                        <th>Failed Jobs</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Item -->
+                    {% for workflow in workflow_data %}
+                    <tr>
+                      <!-- ID -->
+                      <td class="border-0 font-weight-bold">{{workflow.id}}</td>
+                      <!-- System -->
+                      <td class="border-0 font-weight-normal">{{workflow.system}}</td>
+                      <!-- Node -->
+                      <td class="border-0 font-weight-normal">{{workflow.node}}</td>
+                      <!-- Status -->
+                      {% if workflow.status == "Completed" %}
+                        <td class="font-weight-bold text-success">{{ workflow.status }}</td>
+                      {% elif workflow.status == "Running" %}
+                        <td class="font-weight-bold text-warning">{{ workflow.status }}</td>
+                      {% elif workflow.status == "Failed" %}
+                        <td class="font-weight-bold text-danger">{{ workflow.status }}</td>
+                      {% endif %}
+                      <!-- Progress -->
+                      <td class="border-0">
+                          <div class="row d-flex align-items-center">
+                              <div class="col-12 col-xl-2 px-0">
+                                  <div class="small font-weight-bold">{{workflow.progress}}%</div>
+                              </div>
+                              <div class="col-12 col-xl-10 px-0 px-xl-2">
+                                  <div class="progress progress-lg mb-0">
+                                      <div class="progress-bar bg-primary" role="progressbar" aria-valuenow={{workflow.progress}} aria-valuemin="0" aria-valuemax="100" style="width: {{workflow.progress}}%;"></div>
+                                  </div>
+                              </div>
+                          </div>
+                      </td>
+                      <!-- Jobs -->
+                      <td class="border-0 font-weight-bold">{{workflow.total_jobs}}</td>
+                      <td class="border-0 font-weight-bold text-success">{{workflow.completed_jobs}}</td>
+                      <td class="border-0 font-weight-bold text-warning">{{workflow.running_jobs}}</td>
+                      <td class="border-0 font-weight-bold text-danger">{{workflow.failed_jobs}}</td>
+                      <!-- Date -->
+                      <td class="border-0 font-weight-normal">{{workflow.start_date}}</td>
+                      {% if workflow.end_date == None %}
+                        <td class="border-0 font-weight-normal">-</td>
+                      {% else %}
+                        <td class="border-0 font-weight-normal">{{workflow.end_date}}</td>
+                      {% endif %}
+                    </tr>
+                    {% endfor %}
+                    <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 85%;"></div>
+                </tbody>
+            </table>
+        </div>
+
+        {% include 'includes/footer.html' %}
+
+    </main>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<!-- Flash Notifications -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+    {% autoescape false %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function(){
+      const notyf = new Notyf({
+          position: {
+              x: 'right',
+              y: 'bottom',
+          },
+          types: [
+              {
+                  type: 'info',
+                  background: 'blue',
+                  icon: {
+                      className: 'fas fa-info-circle',
+                      tagName: 'span',
+                      color: '#fff'
+                  },
+                  dismissible: true
+              }
+          ]
+      });
+      notyf.open({
+          type: 'info',
+          message: '{{message}}'
+      });
+    });
+    </script>
+    {% endautoescape %}
+  {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<!-- Datatables -->
+{% endblock javascripts %}
