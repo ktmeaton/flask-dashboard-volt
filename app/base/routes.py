@@ -30,7 +30,6 @@ def route_default():
 
 @blueprint.route("/login", methods=["GET", "POST"])
 def login():
-    print(request.method)
     login_form = LoginForm(request.form)
     if "login" in request.form:
 
@@ -63,7 +62,7 @@ def login():
         # User and pass ok
         elif user and verify_pass(password, user.password):
             login_user(user)
-            return redirect(url_for("base_blueprint.route_default"))
+            return redirect(url_for("home_blueprint.index"))
 
         # Unhandled
         else:
@@ -76,7 +75,7 @@ def login():
         return render_template("accounts/login.html", form=login_form)
 
     # Otherwise send them home
-    return redirect(url_for("home_blueprint.index"))
+    return redirect(url_for("home_blueprint.route_index"))
 
 
 @blueprint.route("/register", methods=["GET", "POST"])
@@ -128,7 +127,7 @@ def register():
         # login_user(user)
 
         flash("A confirmation email has been sent via email.", "success")
-        return render_template("accounts/login.html", form=create_account_form)
+        return redirect(url_for("base_blueprint.route_default"))
 
     else:
         return render_template("accounts/register.html", form=create_account_form)
@@ -137,7 +136,6 @@ def register():
 @blueprint.route("/confirm/<token>")
 # @login_required
 def confirm_email(token):
-    print(confirm_token(token))
     try:
         email = confirm_token(token)
     except Exception:
