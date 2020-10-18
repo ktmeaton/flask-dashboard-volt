@@ -16,6 +16,8 @@ conda activate flowdash-bio
 # Configure the app
 export FLASK_APP=run.py
 export FLASK_ENV=development
+export APP_MAIL_USERNAME=foo
+export APP_MAIL_PASSWORD=bar
 
 # Start the app
 flask run --host=0.0.0.0 --port=5000

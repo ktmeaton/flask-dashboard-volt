@@ -15,10 +15,12 @@ __pycache__/
 env
 venv
 
+.env
+
 # other
 .DS_Store
 
-# sphinx docs 
+# sphinx docs
 _build
 _static
 _templates

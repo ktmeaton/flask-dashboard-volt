@@ -1,6 +1,6 @@
 {% extends "layouts/base-fullscreen.html" %}
 
-{% block title %} Login {% endblock %} 
+{% block title %} Login {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -29,12 +29,12 @@
                                         {{ msg | safe }}
                                     {% else %}
                                         Add your credentials
-                                    {% endif %}                                     
-                                </p>    
+                                    {% endif %}
+                                </p>
                             </div>
 
                             <form method="post" action="" class="mt-4">
-                                
+
                                 {{ form.hidden_tag() }}
 
                                 <!-- Form -->
@@ -43,7 +43,7 @@
                                     <div class="input-group">
                                         <span class="input-group-text" id="basic-addon1"><span class="fas fa-user-circle"></span></span>
                                         {{ form.username(placeholder="Username", class="form-control") }}
-                                    </div>  
+                                    </div>
                                 </div>
                                 <!-- End of Form -->
                                 <div class="form-group">
@@ -53,7 +53,7 @@
                                         <div class="input-group">
                                             <span class="input-group-text" id="basic-addon2"><span class="fas fa-unlock-alt"></span></span>
                                             {{ form.password(placeholder="Password", class="form-control", type="password") }}
-                                        </div>  
+                                        </div>
                                     </div>
                                     <!-- End of Form -->
 
@@ -75,7 +75,7 @@
 
                             <div class="d-flex justify-content-center align-items-center mt-4">
                                 <span class="font-weight-normal">
-                                    &copy; <a  href="https://themesberg.com" target="_blank">Themesberg</a> 
+                                    &copy; <a  href="https://themesberg.com" target="_blank">Themesberg</a>
                                     - coded by <a target="_blank" href="https://appseed.us">AppSeed</a>
                                 </span>
                             </div>
@@ -91,4 +91,40 @@
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+<!-- Flash Notifications -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+    {% autoescape false %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function(){
+      const notyf = new Notyf({
+          position: {
+              x: 'right',
+              y: 'bottom',
+          },
+          types: [
+              {
+                  type: 'info',
+                  background: 'blue',
+                  icon: {
+                      className: 'fas fa-info-circle',
+                      tagName: 'span',
+                      color: '#fff'
+                  },
+                  dismissible: true
+              }
+          ]
+      });
+      notyf.open({
+          type: 'info',
+          message: '{{message}}'
+      });
+    });
+    </script>
+    {% endautoescape %}
+  {% endfor %}
+  {% endif %}
+{% endwith %}
+{% endblock javascripts %}

@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head> 
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 <!-- Primary Meta Tags -->
@@ -67,15 +67,16 @@
     <!-- Specific Page CSS goes HERE  -->
     {% block stylesheets %}{% endblock stylesheets %}
 
-</head> 
+</head>
 <body class="{% block body_class %}{% endblock body_class %}">
-           
+
     {% block content %}{% endblock content %}
 
-    {% include 'includes/scripts.html' %}    
-    
+    {% include 'includes/scripts.html' %}
+
     <!-- Specific Page JS goes HERE  -->
-    {% block javascripts %}{% endblock javascripts %}
+    {% block javascripts %}
+    {% endblock javascripts %}
 
 </body>
 </html>
