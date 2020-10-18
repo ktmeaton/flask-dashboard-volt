@@ -4,7 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from app.home import blueprint
-from flask import render_template, request
+from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required
 
 from jinja2 import TemplateNotFound
@@ -64,14 +64,56 @@ def get_segment(request):
 @blueprint.route("/database", methods=["GET", "POST"])
 @login_required
 def route_database_enter():
+    # Need to do user auth here when posting
     workflow_form = WorkflowForm(request.form)
     if request.method == "POST" and workflow_form.validate():
-        return render_template(
-            "workflow-view.html",
-            msg="Workflow created.",
-            success=True,
-            form=workflow_form,
+        new_workflow = Workflow(**request.form)
+
+        check_workflow = (
+            db.session.query(Workflow)
+            .filter(Workflow.system == new_workflow.system)
+            .filter(Workflow.node == new_workflow.node)
+            .filter(Workflow.total_jobs == new_workflow.total_jobs)
+            # .filter(Workflow.username == new_workflow.username)
+            # .filter(Workflow.start_date == new_workflow.start_date)
+            .first()
         )
+        print("CHECK WORKFLOW: ", check_workflow)
+        # Add workflow to database if it can't be found
+        if not check_workflow:
+            db.session.add(new_workflow)
+            db.session.commit()
+            flash(
+                "New workflow added for "
+                + "<br>System: {0}".format(workflow_form.system.data)
+                + "<br>Node: {0}".format(workflow_form.node.data)
+                + "<br>Jobs: {0}".format(workflow_form.total_jobs.data)
+            )
+        # Otherwise update workflow jobs in database
+        else:
+            (
+                db.session.query(Workflow)
+                .filter_by(id=check_workflow.id)
+                .update(
+                    dict(
+                        status=new_workflow.status,
+                        progress=new_workflow.progress,
+                        completed_jobs=new_workflow.completed_jobs,
+                        running_jobs=new_workflow.running_jobs,
+                        failed_jobs=new_workflow.failed_jobs,
+                        end_date=new_workflow.end_date,
+                    )
+                )
+            )
+            db.session.commit()
+            flash(
+                "Updated workflow for "
+                + "<br>System: {0}".format(workflow_form.system.data)
+                + "<br>Node: {0}".format(workflow_form.node.data)
+                + "<br>Jobs: {0}".format(workflow_form.total_jobs.data)
+            )
+        return redirect(url_for("home_blueprint.route_workflow_view"))
+
     else:
         return render_template("database-enter.html", form=workflow_form)
 
@@ -79,42 +121,7 @@ def route_database_enter():
 @blueprint.route("/workflow", methods=["GET", "POST"])
 @login_required
 def route_workflow_view():
-    if request.method == "POST":
-        print(request.form)
-    # Setup the workflow database entry
-    # flash(
-    #    "New workflow added for "
-    #    + "<br>System: {0}".format(workflow_form.system.data)
-    #    + "<br>Node: {0}".format(workflow_form.node.data)
-    #    + "<br>Jobs: {0}".format(workflow_form.total_jobs.data)
-    # )
-    new_workflow = Workflow()
-    # Check if workflow already in database
-    check_workflow = (
-        db.session.query(Workflow)
-        .filter(Workflow.system == new_workflow.system)
-        .filter(Workflow.node == new_workflow.node)
-        .filter(Workflow.total_jobs == new_workflow.total_jobs)
-        .filter(Workflow.username == new_workflow.username)
-        .first()
-    )
-    # Add workflow to database if it can't be found
-    if not check_workflow:
-        db.session.add(new_workflow)
-        db.session.commit()
-    # Otherwise update workflow jobs in database
-    else:
-        check_workflow.status = new_workflow.status
-        check_workflow.progress = new_workflow.progress
-        check_workflow.completed_jobs = new_workflow.completed_jobs
-        check_workflow.running_jobs = new_workflow.running_jobs
-        check_workflow.failed_jobs = new_workflow.failed_jobs
-        check_workflow.end_date = new_workflow.end_date
-
     data = Workflow.query.all()
+    print(data)
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)
-
-    # cursor.execute("select * from table_name")
-    # data = cursor.fetchall() #data from database
-    # return render_template("example.html", value=data)

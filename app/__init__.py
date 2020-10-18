@@ -9,9 +9,13 @@ from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 from flask_mail import Mail
 
+from flask_wtf.csrf import CSRFProtect  # Form security
+from flask_bootstrap import Bootstrap  # Bootstrap WTF Forms
+
 db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
+csrf = CSRFProtect()
 
 
 def register_extensions(app):
@@ -42,4 +46,6 @@ def create_app(config):
     register_blueprints(app)
     configure_database(app)
     mail.init_app(app)
+    csrf.init_app(app)
+    Bootstrap(app)
     return app

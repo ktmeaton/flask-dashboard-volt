@@ -83,53 +83,57 @@
                         <th>Failed Jobs</th>
                         <th>Start Date</th>
                         <th>End Date</th>
+                        <th>Username</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Item -->
-                    {% for workflow in workflow_data %}
-                    <tr>
-                      <!-- ID -->
-                      <td class="border-0 font-weight-bold">{{workflow.id}}</td>
-                      <!-- System -->
-                      <td class="border-0 font-weight-normal">{{workflow.system}}</td>
-                      <!-- Node -->
-                      <td class="border-0 font-weight-normal">{{workflow.node}}</td>
-                      <!-- Status -->
-                      {% if workflow.status == "Completed" %}
-                        <td class="font-weight-bold text-success">{{ workflow.status }}</td>
-                      {% elif workflow.status == "Running" %}
-                        <td class="font-weight-bold text-warning">{{ workflow.status }}</td>
-                      {% elif workflow.status == "Failed" %}
-                        <td class="font-weight-bold text-danger">{{ workflow.status }}</td>
-                      {% endif %}
-                      <!-- Progress -->
-                      <td class="border-0">
-                          <div class="row d-flex align-items-center">
-                              <div class="col-12 col-xl-2 px-0">
-                                  <div class="small font-weight-bold">{{workflow.progress}}%</div>
-                              </div>
-                              <div class="col-12 col-xl-10 px-0 px-xl-2">
-                                  <div class="progress progress-lg mb-0">
-                                      <div class="progress-bar bg-primary" role="progressbar" aria-valuenow={{workflow.progress}} aria-valuemin="0" aria-valuemax="100" style="width: {{workflow.progress}}%;"></div>
-                                  </div>
-                              </div>
-                          </div>
-                      </td>
-                      <!-- Jobs -->
-                      <td class="border-0 font-weight-bold">{{workflow.total_jobs}}</td>
-                      <td class="border-0 font-weight-bold text-success">{{workflow.completed_jobs}}</td>
-                      <td class="border-0 font-weight-bold text-warning">{{workflow.running_jobs}}</td>
-                      <td class="border-0 font-weight-bold text-danger">{{workflow.failed_jobs}}</td>
-                      <!-- Date -->
-                      <td class="border-0 font-weight-normal">{{workflow.start_date}}</td>
-                      {% if workflow.end_date == None %}
-                        <td class="border-0 font-weight-normal">-</td>
-                      {% else %}
-                        <td class="border-0 font-weight-normal">{{workflow.end_date}}</td>
-                      {% endif %}
-                    </tr>
-                    {% endfor %}
+                    {% if workflow_data %}
+                      {% for workflow in workflow_data %}
+                      <tr>
+                        <!-- ID -->
+                        <td class="border-0 font-weight-bold">{{workflow.id}}</td>
+                        <!-- System -->
+                        <td class="border-0 font-weight-normal">{{workflow.system}}</td>
+                        <!-- Node -->
+                        <td class="border-0 font-weight-normal">{{workflow.node}}</td>
+                        <!-- Status -->
+                        {% if workflow.status == "Completed" %}
+                          <td class="font-weight-bold text-success">{{ workflow.status }}</td>
+                        {% elif workflow.status == "Running" %}
+                          <td class="font-weight-bold text-warning">{{ workflow.status }}</td>
+                        {% elif workflow.status == "Failed" %}
+                          <td class="font-weight-bold text-danger">{{ workflow.status }}</td>
+                        {% endif %}
+                        <!-- Progress -->
+                        <td class="border-0">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-12 col-xl-2 px-0">
+                                    <div class="small font-weight-bold">{{workflow.progress}}%</div>
+                                </div>
+                                <div class="col-12 col-xl-10 px-0 px-xl-2">
+                                    <div class="progress progress-lg mb-0">
+                                        <div class="progress-bar bg-primary" role="progressbar" aria-valuenow={{workflow.progress}} aria-valuemin="0" aria-valuemax="100" style="width: {{workflow.progress}}%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Jobs -->
+                        <td class="border-0 font-weight-bold">{{workflow.total_jobs}}</td>
+                        <td class="border-0 font-weight-bold text-success">{{workflow.completed_jobs}}</td>
+                        <td class="border-0 font-weight-bold text-warning">{{workflow.running_jobs}}</td>
+                        <td class="border-0 font-weight-bold text-danger">{{workflow.failed_jobs}}</td>
+                        <!-- Date -->
+                        <td class="border-0 font-weight-normal">{{workflow.start_date}}</td>
+                        {% if workflow.end_date == None %}
+                          <td class="border-0 font-weight-normal">-</td>
+                        {% else %}
+                          <td class="border-0 font-weight-normal">{{workflow.end_date}}</td>
+                        {% endif %}
+                        <td class="border-0 font-weight-bold">{{workflow.username}}</td>
+                      </tr>
+                      {% endfor %}
+                    {% endif %}
                     <div class="progress-bar bg-primary" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 85%;"></div>
                 </tbody>
             </table>
