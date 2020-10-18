@@ -51,6 +51,11 @@ heroku login
 # Create the Heroku project
 heroku create
 
+# Setup env var for heroku
+heroku config:set APP_MAIL_USERNAME=myEmailUsername
+heroku config:set APP_MAIL_PASSWORD=myEmailPassword
+heroku config:set SECURITY_PASSWORD_SALT=mySaltPassword
+
 # Trigger the LIVE deploy
 git push heroku master
 
