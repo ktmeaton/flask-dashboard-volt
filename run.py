@@ -6,7 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 from flask_migrate import Migrate
 from sys import exit
 from app import create_app, db
-
+import config  # APP SETTINGS will be a config object
 import os
 
 # Load current configuration
