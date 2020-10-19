@@ -22,6 +22,7 @@ except KeyError:
 
 # Run the creat config in __init__.py
 app = create_app(app_config)
+print(app_config.SQLALCHEMY_DATABASE_URI)
 
 # Configure database
 Migrate(app, db)
