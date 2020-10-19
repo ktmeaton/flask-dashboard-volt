@@ -17,6 +17,8 @@ from app.base.email import send_email
 
 import datetime  # confirmed_on
 
+from smtplib import SMTPAuthenticationError
+
 
 @blueprint.route("/")
 def route_default():
@@ -120,7 +122,14 @@ def register():
         )
         html = render_template("accounts/activate.html", confirm_url=confirm_url)
         subject = "Please confirm your email"
-        send_email(user.email, subject, html)
+        try:
+            send_email(user.email, subject, html)
+        except SMTPAuthenticationError:
+            flash(
+                "Server-side authentication eror. "
+                + "Was mail properly configured for this app?"
+            )
+            return redirect(url_for("base_blueprint.login"))
 
         db.session.add(user)
         db.session.commit()
