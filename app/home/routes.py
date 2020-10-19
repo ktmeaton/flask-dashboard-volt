@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from app.home import blueprint
 from flask import render_template, request, flash, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from jinja2 import TemplateNotFound
 
@@ -121,7 +121,6 @@ def route_database_enter():
 @blueprint.route("/workflow", methods=["GET", "POST"])
 @login_required
 def route_workflow_view():
-    data = Workflow.query.all()
-    print(data)
+    data = Workflow.query.filter(Workflow.username == str(current_user)).all()
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)
