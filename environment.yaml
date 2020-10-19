@@ -17,3 +17,5 @@ dependencies:
   - python-dotenv=0.14.0
   - flask-bootstrap=3.3.7.1
   - flask-mail=0.9.1
+  - psycopg2=2.8.6
+  - postgresql=12.3

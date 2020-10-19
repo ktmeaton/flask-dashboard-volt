@@ -5,28 +5,25 @@ Copyright (c) 2019 - present AppSeed.us
 
 from flask_migrate import Migrate
 from sys import exit
-from decouple import config
-
-from config import config_dict
 from app import create_app, db
 
-# from os import environ
+import os
 
-# WARNING: Don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=True)
-
-# The configuration
-get_config_mode = "Debug" if DEBUG else "Production"
-
+# Load current configuration
 try:
     # Load the configuration using the default values
-    app_config = config_dict[get_config_mode.capitalize()]
+    app_config = eval(os.environ["APP_SETTINGS"])
 
 except KeyError:
-    exit("Error: Invalid <config_mode>. Expected values [Debug, Production] ")
+    exit(
+        "Error: Invalid <config_mode>. "
+        + "Expected values [Production, Staging, Development] "
+    )
 
+# Run the creat config in __init__.py
 app = create_app(app_config)
-# Bootstrap(app)
+
+# Configure database
 Migrate(app, db)
 
 if __name__ == "__main__":

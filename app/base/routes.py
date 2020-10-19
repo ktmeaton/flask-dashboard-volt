@@ -112,8 +112,6 @@ def register():
         # else we can create the user
         user = User(**request.form)
         user.registered_on = datetime.datetime.now()
-        db.session.add(user)
-        db.session.commit()
 
         # Send an activation email
         token = generate_confirmation_token(user.email)
@@ -124,7 +122,8 @@ def register():
         subject = "Please confirm your email"
         send_email(user.email, subject, html)
 
-        # login_user(user)
+        db.session.add(user)
+        db.session.commit()
 
         flash("A confirmation email has been sent via email.", "success")
         return redirect(url_for("base_blueprint.route_default"))

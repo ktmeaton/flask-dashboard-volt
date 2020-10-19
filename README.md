@@ -48,16 +48,28 @@ heroku/7.25.0 win32-x64 node-v12.13.0 # <-- All good
 heroku login
 # this commaond will open a browser window - click the login button (in browser)
 
-# Create the Heroku project
-heroku create
+# Create the Heroku project, staging and production
+heroku create flowdash-bio
+heroku create flowdash-bio-stage
+
+# Add production and staging remotes
+git remote add production git@heroku.com:flowdash-bio.git
+git remote add staging git@heroku.com:flowdash-bio-stage.git
+
+# Configure database
+heroku addons:create --remote production heroku-postgresql:hobby-dev
+heroku addons:create --remote staging heroku-postgresql:hobby-dev
 
 # Setup env var for heroku
-heroku config:set APP_MAIL_USERNAME=myEmailUsername
-heroku config:set APP_MAIL_PASSWORD=myEmailPassword
-heroku config:set SECURITY_PASSWORD_SALT=mySaltPassword
+# First edit heroku-config.sh with your information
+./heroku-config.sh
+
+# Check the new config
+heroku config --remote staging
+heroku config --remote production
 
 # Trigger the LIVE deploy
-git push heroku master
+git push heroku staging
 
 $ # Open the LIVE app in browser
 heroku open
@@ -69,45 +81,32 @@ heroku open
 export BROWSER="/mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe"
 ```
 
-### [Gunicorn](https://gunicorn.org/)
+### Local PostgreSQL
 
----
-
-Gunicorn 'Green Unicorn' is a Python WSGI HTTP Server for UNIX.
-
-> Start the app using gunicorn binary
+> Configure a local postgresql database instead of sqlite
 
 ```bash
-gunicorn --bind 0.0.0.0:8001 run:app
+# Initialize the general database
+initdb -D local-psql-db
+
+# Start the database server
+pg_ctl -D local-psql-db -l logfile start
+
+# Create a postgres user
+createuser --encrypted --pwprompt postgres
+
+# Create the flowdash-bio database
+createdb --owner=postgres flowdash-bio
+
+# List databases to confirm theirs a db called "flowdash-bio" owned by postgres
+psql -U postgres -c "\l"
+
+# Go register a new account via the web app, and check if they show up in the database
+psql -U postgres flowdash-bio -c "SELECT * FROM \"User\""
+
+# Stop database server when finished
+pg_ctl -D local-psql-db -l stop
 ```
-
-Visit `http://localhost:8001` in your browser. The app should be up & running.
-
-### [Waitress](https://docs.pylonsproject.org/projects/waitress/en/stable/)
-
----
-
-> Start the app using [waitress-serve](https://docs.pylonsproject.org/projects/waitress/en/stable/runner.html).
-
-```bash
-waitress-serve --port=8001 run:app
-```
-
-Visit `http://localhost:8001` in your browser. The app should be up & running.
-
-### [Docker](https://www.docker.com/) execution
-
----
-
-The application can be easily executed in a docker container. The steps:
-
-> Start the app in Docker
-
-```bash
-sudo docker-compose pull && sudo docker-compose build && sudo docker-compose up -d
-```
-
-Visit `http://localhost:5005` in your browser. The app should be up & running.
 
 ## Credits & Links
 
