@@ -10,4 +10,4 @@ waitress==1.4.3
 python-dotenv==0.14.0
 flask-bootstrap==3.3.7.1
 flask-mail==0.9.1
-psycopg2=2.8.6
+psycopg2==2.8.6
