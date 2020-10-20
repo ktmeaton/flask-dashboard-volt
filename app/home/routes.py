@@ -66,6 +66,7 @@ def get_segment(request):
 def route_database_enter():
     # Need to do user auth here when posting
     workflow_form = WorkflowForm(request.form)
+    print(workflow_form.csrf_token)
     if request.method == "POST" and workflow_form.validate():
         new_workflow = Workflow(**request.form)
 
@@ -78,7 +79,6 @@ def route_database_enter():
             # .filter(Workflow.start_date == new_workflow.start_date)
             .first()
         )
-        print("CHECK WORKFLOW: ", check_workflow)
         # Add workflow to database if it can't be found
         if not check_workflow:
             db.session.add(new_workflow)

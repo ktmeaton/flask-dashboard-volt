@@ -11,6 +11,7 @@ class Config(object):
     # Set up the App SECRET_KEY
     SECRET_KEY = config("SECRET_KEY")
     SECURITY_PASSWORD_SALT = config("SECURITY_PASSWORD_SALT")
+    JWT_SECRET_KEY = SECRET_KEY
 
     # This will create a file in <app> FOLDER
     SQLALCHEMY_DATABASE_URI = config("DATABASE_URL")
@@ -22,6 +23,8 @@ class Config(object):
     WTF_CSRF_ENABLED = True
     DEBUG_TB_ENABLED = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+    # Remove "Bearer from the JWT header"
+    JWT_HEADER_TYPE = None
 
     # Email settings
     MAIL_SERVER = "smtp.googlemail.com"

@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from sqlalchemy import Integer, String, Column, Date
 from app import db
-from datetime import datetime
+import datetime
 
 
 class Workflow(db.Model):
@@ -35,12 +35,25 @@ class Workflow(db.Model):
                 value = value[0]
 
             if property == "start_date":
-                value = datetime.strptime(value, "%Y-%m-%d")
+                value = datetime.datetime.strptime(value, "%Y-%m-%d")
 
             if property == "end_date":
-                value = datetime.strptime(value, "%Y-%m-%d")
+                value = datetime.datetime.strptime(value, "%Y-%m-%d")
 
             setattr(self, property, value)
 
     def __repr__(self):
         return str([self.system, self.node, self.total_jobs])
+
+    def as_dict(self):
+        workflow_dict = {}
+        workflow_dict[self.id] = {}
+        for attr in vars(self):
+            if attr == "_sa_instance_state":
+                continue
+            val = getattr(self, attr)
+            if isinstance(val, datetime.date):
+                workflow_dict[self.id][attr] = val.strftime("%Y-%m-%d")
+            else:
+                workflow_dict[self.id][attr] = getattr(self, attr)
+        return workflow_dict

@@ -11,11 +11,13 @@ from flask_mail import Mail
 
 from flask_wtf.csrf import CSRFProtect  # Form security
 from flask_bootstrap import Bootstrap  # Bootstrap WTF Forms
+from flask_jwt_extended import JWTManager  # Web tokens
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 mail = Mail()
 csrf = CSRFProtect()
+jwt = JWTManager()
 
 
 def register_extensions(app):
@@ -24,7 +26,7 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    for module_name in ("base", "home"):
+    for module_name in ("base", "home", "api"):
         module = import_module("app.{}.routes".format(module_name))
         app.register_blueprint(module.blueprint)
 
@@ -47,5 +49,7 @@ def create_app(config):
     configure_database(app)
     mail.init_app(app)
     csrf.init_app(app)
+    jwt.init_app(app)
+
     Bootstrap(app)
     return app
