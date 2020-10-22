@@ -19,42 +19,49 @@ import datetime  # confirmed_on
 
 from smtplib import SMTPAuthenticationError
 
-
+# -----------------------------------------------------------------------------#
+# Account
+# -----------------------------------------------------------------------------#
+# Login
 @blueprint.route("/")
 def route_default():
     return redirect(url_for("base_blueprint.login"))
 
 
-# -----------------------------------------------------------------------------#
-# Account
-# -----------------------------------------------------------------------------#
+# Terms of Agreement
+@blueprint.route("/terms", methods=["GET"])
+def terms():
+    return render_template("accounts/terms.html")
 
 
+# -----------------------------------------------------------------------------#
+# Login Page
 @blueprint.route("/login", methods=["GET", "POST"])
 def login():
     login_form = LoginForm(request.form)
-    if "login" in request.form:
-
+    # -------------------------------------------------------------------------#
+    # POST Request - Valid
+    if login_form.validate_on_submit():
         # read form data
         username = request.form["username"]
         password = request.form["password"]
+        # remember_me = True if "remember_me" in request.form else False
 
         # Locate user
         user = User.query.filter_by(username=username).first()
 
-        # Check the password
-        # User and pass ok, but not confirmed
+        # Username and password are valid but account not confirmed
         if user and verify_pass(password, user.password) and not user.confirmed:
-            flash("User has not confirmed by email.")
+            flash("User has not confirmed by email.", "info")
             return render_template(
                 "accounts/login.html",
                 msg="User has not confirmed by email.",
                 form=login_form,
             )
 
-        # User or pass not ok
+        # Username or password is invalid
         elif not user or not verify_pass(password, user.password):
-            flash("Wrong user or password.")
+            flash("Wrong username or password.", "info")
             return render_template(
                 "accounts/login.html",
                 msg="Wrong username or password.",
@@ -68,86 +75,108 @@ def login():
 
         # Unhandled
         else:
-            flash("Unknown error.")
+            flash("Unknown error.", "error")
             return render_template(
                 "accounts/login.html", msg="Unknown error.", form=login_form
             )
 
+    # -------------------------------------------------------------------------#
+    # GET Request - Non-Authenticated User
     if not current_user.is_authenticated:
         return render_template("accounts/login.html", form=login_form)
 
-    # Otherwise send them home
-    return redirect(url_for("home_blueprint.index"))
+    # -------------------------------------------------------------------------#
+    # GET Request - Authenticated User
+    else:
+        return redirect(url_for("home_blueprint.index"))
 
 
+# -----------------------------------------------------------------------------#
+# Registration Page
 @blueprint.route("/register", methods=["GET", "POST"])
 def register():
-    # login_form = LoginForm(request.form)
     create_account_form = CreateAccountForm(request.form)
-    if "register" in request.form:
+    print("first", request.form)
+    # -------------------------------------------------------------------------#
+    if request.method == "POST" and "agree_terms" not in request.form:
+        flash("Please agree to the terms.", "warning")
+        return render_template(
+            "accounts/register.html",
+            msg="Please agree to the terms.",
+            form=create_account_form,
+        )
+    # -------------------------------------------------------------------------#
+    # POST Request - Valid
+    if create_account_form.validate_on_submit():
 
         username = request.form["username"]
         email = request.form["email"]
 
-        # Check usename exists
         user = User.query.filter_by(username=username).first()
+        # Check if usename exists
         if user:
-            flash("Username already registered")
+            flash("Username already registered.", "info")
             return render_template(
                 "accounts/register.html",
-                msg="Username already registered",
-                success=False,
+                msg="Username already registered.",
                 form=create_account_form,
             )
 
-        # Check email exists
+        # Check if email exists
         user = User.query.filter_by(email=email).first()
         if user:
-            flash("Email already registered")
+            flash("Email already registered.", "info")
             return render_template(
                 "accounts/register.html",
-                msg="Email already registered",
-                success=False,
+                msg="Email already registered.",
                 form=create_account_form,
             )
 
-        # else we can create the user
+        # Create user from from data
         user = User(**request.form)
         user.registered_on = datetime.datetime.now()
 
         # Send an activation email
-        token = generate_confirmation_token(user.email)
+        confirmation_token = generate_confirmation_token(user.email)
         confirm_url = url_for(
-            "base_blueprint.confirm_email", token=token, _external=True
+            "base_blueprint.confirm_email", token=confirmation_token, _external=True
         )
         html = render_template("accounts/activate.html", confirm_url=confirm_url)
-        subject = "Please confirm your email"
+        subject = "Please confirm your email."
         try:
             send_email(user.email, subject, html)
         except SMTPAuthenticationError:
             flash(
                 "Server-side authentication eror. "
-                + "Was mail properly configured for this app?"
+                + "Was mail properly configured for this app?",
+                "error",
             )
             return redirect(url_for("base_blueprint.login"))
 
+        # Add the unconfirmed user
         db.session.add(user)
         db.session.commit()
 
-        flash("A confirmation email has been sent via email.", "success")
+        flash("A confirmation email has been sent.", "success")
         return redirect(url_for("base_blueprint.route_default"))
 
+    # GET Request
     else:
         return render_template("accounts/register.html", form=create_account_form)
 
 
+# -----------------------------------------------------------------------------#
+# Account Confirmation
 @blueprint.route("/confirm/<token>")
 # @login_required
 def confirm_email(token):
+    # Check for valid confirmation token
     try:
         email = confirm_token(token)
     except Exception:
-        flash("The confirmation link is invalid or has expired.", "danger")
+        flash("The confirmation link is invalid or has expired.", "error")
+        return redirect(url_for("base_blueprint.login"))
+
     user = User.query.filter_by(email=email).first_or_404()
     if user.confirmed:
         flash("Account already confirmed.", "success")

@@ -8,7 +8,12 @@ from decouple import config
 
 class Config(object):
 
+    # Assume DEBUG by default
+    DEBUG = True
+
     # Set up the App SECRET_KEY
+    # Used by:
+    #   flask-WTF (protect against CSRF)
     SECRET_KEY = config("SECRET_KEY")
     SECURITY_PASSWORD_SALT = config("SECURITY_PASSWORD_SALT")
     JWT_SECRET_KEY = SECRET_KEY

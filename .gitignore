@@ -10,11 +10,16 @@ __pycache__/
 *.db
 *.sqlite3
 *.log
+logfile
+local-psql-db
 
 # venv
 env
 venv
-.env
+
+# secrets
+.env-secret
+heroku-config.sh
 
 # other
 .DS_Store

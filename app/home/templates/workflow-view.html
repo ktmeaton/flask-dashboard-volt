@@ -147,41 +147,4 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-<!-- Flash Notifications -->
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for message in messages %}
-    {% autoescape false %}
-    <script>
-      document.addEventListener("DOMContentLoaded", function(){
-      const notyf = new Notyf({
-          position: {
-              x: 'right',
-              y: 'bottom',
-          },
-          types: [
-              {
-                  type: 'info',
-                  background: 'blue',
-                  icon: {
-                      className: 'fas fa-info-circle',
-                      tagName: 'span',
-                      color: '#fff'
-                  },
-                  dismissible: true
-              }
-          ]
-      });
-      notyf.open({
-          type: 'info',
-          message: '{{message}}'
-      });
-    });
-    </script>
-    {% endautoescape %}
-  {% endfor %}
-  {% endif %}
-{% endwith %}
-
-<!-- Datatables -->
 {% endblock javascripts %}

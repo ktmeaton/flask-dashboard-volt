@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password = Column(Binary)
+    remember_me = Column(Binary)
     registered_on = Column(DateTime, nullable=True)
     admin = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)

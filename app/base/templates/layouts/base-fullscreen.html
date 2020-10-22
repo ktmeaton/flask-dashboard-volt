@@ -74,6 +74,15 @@
 
     {% include 'includes/scripts.html' %}
 
+    <!-- Flash Notyf -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category,message in messages %}
+          <script src="/static/assets/js/flash-notyf.js" message="{{message}}" category="{{category}}"></script>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     <!-- Specific Page JS goes HERE  -->
     {% block javascripts %}
     {% endblock javascripts %}

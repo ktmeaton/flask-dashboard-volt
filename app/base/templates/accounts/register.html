@@ -39,49 +39,39 @@
 
                                 <!-- Form -->
                                 <div class="form-group mb-4">
-                                    <label for="email">Username</label>
+                                    {{ form.username.label }}
                                     <div class="input-group">
-                                        <span class="input-group-text" id="basic-addon3"><span class="fas fa-user-shield"></span></span>
+                                        <span class="input-group-text" id="register_form_username" name="username"><span class="fas fa-user-shield"></span></span>
                                         {{ form.username(placeholder="Username", class="form-control") }}
                                     </div>
                                 </div>
-                                <!-- End of Form -->
 
-                                <!-- Form -->
                                 <div class="form-group mb-4">
-                                    <label for="email">Your Email</label>
+                                    {{ form.email.label }}
                                     <div class="input-group">
-                                        <span class="input-group-text" id="basic-addon3"><span class="fas fa-envelope"></span></span>
+                                        <span class="input-group-text" id="register_form_email" name="email"><span class="fas fa-envelope"></span></span>
                                         {{ form.email(placeholder="Email", class="input form-control", type="email") }}
                                     </div>
                                 </div>
-                                <!-- End of Form -->
 
-                                <div class="form-group">
-                                    <!-- Form -->
-                                    <div class="form-group mb-4">
-                                        <label for="password">Your Password</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text" id="basic-addon4"><span class="fas fa-unlock-alt"></span></span>
-                                            {{ form.password(placeholder="Password", class="form-control", type="password") }}
-                                        </div>
+                                <div class="form-group mb-4">
+                                    {{ form.password.label }}
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="register_form_password" name="password"><span class="fas fa-unlock-alt"></span></span>
+                                        {{ form.password(placeholder="Password", class="form-control", type="password") }}
                                     </div>
-                                    <!-- End of Form -->
-
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck5">
-                                            <label class="form-check-label" for="defaultCheck5">
-                                              Agree terms
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <a href="{{ url_for('base_blueprint.login') }}" class="small text-right">Login</a>
-                                        </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="register_form_agree_terms" name="agree_terms">
+                                        <a href="{{ url_for('base_blueprint.terms') }}" >Agree Terms</a>
                                     </div>
-
+                                    <div class="form-check">
+                                        <a href="{{ url_for('base_blueprint.login') }}" class="small text-right">Login</a>
+                                    </div>
                                 </div>
                                 <button type="submit" name="register" class="btn btn-block btn-primary">Register</button>
+                                <!-- End Form -->
                             </form>
                             <div class="d-flex justify-content-center align-items-center mt-4">
                                 <span class="font-weight-normal">
@@ -100,38 +90,4 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-<!-- Flash Notifications -->
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for message in messages %}
-    {% autoescape false %}
-    <script>
-      document.addEventListener("DOMContentLoaded", function(){
-      const notyf = new Notyf({
-          position: {
-              x: 'right',
-              y: 'bottom',
-          },
-          types: [
-              {
-                  type: 'info',
-                  background: 'blue',
-                  icon: {
-                      className: 'fas fa-info-circle',
-                      tagName: 'span',
-                      color: '#fff'
-                  },
-                  dismissible: true
-              }
-          ]
-      });
-      notyf.open({
-          type: 'info',
-          message: '{{message}}'
-      });
-    });
-    </script>
-    {% endautoescape %}
-  {% endfor %}
-  {% endif %}
-{% endwith %}{% endblock javascripts %}
+{% endblock javascripts %}
