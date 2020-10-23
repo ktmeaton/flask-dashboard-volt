@@ -25,6 +25,7 @@ from smtplib import SMTPAuthenticationError
 # Login
 @blueprint.route("/")
 def route_default():
+    print(current_user.workflow)
     return redirect(url_for("base_blueprint.login"))
 
 
@@ -43,12 +44,11 @@ def login():
     # POST Request - Valid
     if login_form.validate_on_submit():
         # read form data
-        username = request.form["username"]
-        password = request.form["password"]
+        username = login_form.username.data
+        password = login_form.password.data
         # remember_me = True if "remember_me" in request.form else False
-
         # Locate user
-        user = User.query.filter_by(username=username).first()
+        user = db.session.query(User).filter_by(username=username).first()
 
         # Username and password are valid but account not confirmed
         if user and verify_pass(password, user.password) and not user.confirmed:
@@ -96,15 +96,6 @@ def login():
 @blueprint.route("/register", methods=["GET", "POST"])
 def register():
     create_account_form = CreateAccountForm(request.form)
-    print("first", request.form)
-    # -------------------------------------------------------------------------#
-    if request.method == "POST" and "agree_terms" not in request.form:
-        flash("Please agree to the terms.", "warning")
-        return render_template(
-            "accounts/register.html",
-            msg="Please agree to the terms.",
-            form=create_account_form,
-        )
     # -------------------------------------------------------------------------#
     # POST Request - Valid
     if create_account_form.validate_on_submit():

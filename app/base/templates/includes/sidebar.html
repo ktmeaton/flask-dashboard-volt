@@ -25,13 +25,13 @@
                 </a>
             </li>
             <li class="nav-item  {% if 'workflow' in segment %} active {% endif %}">
-                <a href="/workflow" class="nav-link">
+                <a href="{{ url_for('home_blueprint.workflows') }}" class="nav-link">
                     <span class="sidebar-icon"><span class="fas fa-tv"></span></span>
-                    <span>Workflow</span>
+                    <span>Workflows</span>
                 </a>
             </li>
             <li class="nav-item  {% if 'database' in segment %} active {% endif %}">
-                <a href="/database" class="nav-link">
+                <a href="{{ url_for('home_blueprint.database') }}" class="nav-link">
                     <span class="sidebar-icon"><span class="fas fa-database"></span></span>
                     <span>Database</span>
                 </a>

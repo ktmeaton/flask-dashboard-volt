@@ -62,10 +62,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="register_form_agree_terms" name="agree_terms">
-                                        <a href="{{ url_for('base_blueprint.terms') }}" >Agree Terms</a>
-                                    </div>
+                                    <a href="{{ url_for('base_blueprint.terms') }} " >{{ form.agree_terms }} {{ form.agree_terms.label }}</a>
                                     <div class="form-check">
                                         <a href="{{ url_for('base_blueprint.login') }}" class="small text-right">Login</a>
                                     </div>

@@ -15,7 +15,7 @@ class WorkflowListAPI(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument(
-            "system1",
+            "system",
             type=str,
             required=True,
             help="No system provided",

@@ -17,7 +17,6 @@ from app.home.models import Workflow  # Database model
 @blueprint.route("/index")
 @login_required
 def index():
-
     return render_template("index.html", segment="index")
 
 
@@ -58,16 +57,18 @@ def get_segment(request):
         return None
 
 
-# Custom routes
-
-
+# -----------------------------------------------------------------------------#
+# Database
+# -----------------------------------------------------------------------------#
+# Enter
 @blueprint.route("/database", methods=["GET", "POST"])
 @login_required
-def route_database_enter():
+def database():
     # Need to do user auth here when posting
     workflow_form = WorkflowForm(request.form)
-    print(workflow_form.csrf_token)
-    if request.method == "POST" and workflow_form.validate():
+    # -------------------------------------------------------------------------#
+    # POST Request - Valid
+    if workflow_form.validate_on_submit():
         new_workflow = Workflow(**request.form)
 
         check_workflow = (
@@ -112,15 +113,15 @@ def route_database_enter():
                 + "<br>Node: {0}".format(workflow_form.node.data)
                 + "<br>Jobs: {0}".format(workflow_form.total_jobs.data)
             )
-        return redirect(url_for("home_blueprint.route_workflow_view"))
+        return redirect(url_for("home_blueprint.workflows"))
 
     else:
         return render_template("database-enter.html", form=workflow_form)
 
 
-@blueprint.route("/workflow", methods=["GET", "POST"])
+@blueprint.route("/workflows", methods=["GET", "POST"])
 @login_required
-def route_workflow_view():
+def workflows():
     data = Workflow.query.filter(Workflow.username == str(current_user)).all()
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)

@@ -3,27 +3,31 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from sqlalchemy import Integer, String, Column, Date
+from sqlalchemy import Integer, String, Column, DateTime  # , ForeignKey
 from app import db
 import datetime
 
 
 class Workflow(db.Model):
 
-    __tablename__ = "Workflow"
+    __tablename__ = "workflow"
 
     id = Column(Integer, primary_key=True)
-    system = Column(String, unique=False)
-    node = Column(String, unique=False)
-    status = Column(String, unique=False)
+    system = Column(String(64), unique=False)
+    node = Column(String(64), unique=False)
+    status = Column(String(64), unique=False)
     progress = Column(Integer, unique=False)
     total_jobs = Column(Integer, unique=False)
     completed_jobs = Column(Integer, unique=False)
     running_jobs = Column(Integer, unique=False)
     failed_jobs = Column(Integer, unique=False, nullable=True)
-    start_date = Column(Date, unique=False)
-    end_date = Column(Date, unique=False, nullable=True)
-    username = Column(String, unique=False)
+    start_date = Column(
+        DateTime, unique=False, index=True, default=datetime.datetime.utcnow
+    )
+    end_date = Column(DateTime, unique=False, nullable=True)
+
+    # Relationships
+    # user_id = Column(Integer, ForeignKey('user.id'))
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -34,16 +38,12 @@ class Workflow(db.Model):
                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
                 value = value[0]
 
-            if property == "start_date":
-                value = datetime.datetime.strptime(value, "%Y-%m-%d")
-
-            if property == "end_date":
-                value = datetime.datetime.strptime(value, "%Y-%m-%d")
-
             setattr(self, property, value)
 
     def __repr__(self):
-        return str([self.system, self.node, self.total_jobs])
+        return "<System {}; Node {}; Total Jobs {}>".format(
+            self.system, self.node, self.total_jobs
+        )
 
     def as_dict(self):
         workflow_dict = {}
@@ -57,3 +57,6 @@ class Workflow(db.Model):
             else:
                 workflow_dict[self.id][attr] = getattr(self, attr)
         return workflow_dict
+
+    def end(self):
+        self.end_date = datetime.datetime.utcnow

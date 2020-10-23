@@ -22,6 +22,9 @@ export APP_MAIL_PASSWORD=bar
 # Start the app
 flask run --host=0.0.0.0 --port=5000
 # Access the dashboard in browser: http://127.0.0.1:5000/
+
+# Configure migrations repository
+flask db init
 ```
 
 ## Deployment

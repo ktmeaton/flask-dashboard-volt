@@ -5,6 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from flask import Flask
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 from flask_mail import Mail
@@ -18,6 +19,7 @@ login_manager = LoginManager()
 mail = Mail()
 csrf = CSRFProtect()
 jwt = JWTManager()
+migrate = Migrate()
 
 
 def register_extensions(app):
@@ -47,6 +49,7 @@ def create_app(config):
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)
+    migrate.init_app(app, db)
     mail.init_app(app)
     csrf.init_app(app)
     jwt.init_app(app)

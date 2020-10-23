@@ -21,5 +21,5 @@ class CreateAccountForm(FlaskForm):
     email = TextField("Email", id="email_create", validators=[DataRequired(), Email()])
     password = PasswordField("Password", id="pwd_create", validators=[DataRequired()])
     agree_terms = BooleanField(
-        "Agree Terms", id="remember-me_create", validators=[DataRequired()]
+        "Agree Terms", id="agree-terms_create", validators=[DataRequired()]
     )

@@ -4,28 +4,37 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from flask_login import UserMixin
-from sqlalchemy import Binary, Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Boolean  # , ForeignKey
+
+# Binary, DateTime
+# from sqlalchemy.orm import relationship
 
 from app import db, login_manager
 
-from app.base.util import hash_pass
+# from app.base.util import hash_pass
 
-import datetime
+# import datetime
+
+# from app.home.models import Workflow
 
 
 class User(db.Model, UserMixin):
 
-    __tablename__ = "User"
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True)
-    email = Column(String, unique=True)
-    password = Column(Binary)
-    remember_me = Column(Binary)
-    registered_on = Column(DateTime, nullable=True)
-    admin = Column(Boolean, default=False)
+    username = Column(String(64), unique=True, index=True)
+    email = Column(String(120), unique=True, index=True)
+    password = Column(String(128))
+    remember_me = Column(Boolean, default=False)
+    # registered_on = Column(DateTime, nullable=True)
+    # admin = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
-    confirmed_on = Column(DateTime, nullable=True)
+    # confirmed_on = Column(DateTime, nullable=True)
+
+    # Relationships
+    # workflow_id = Column(Integer, ForeignKey("workflow.id"))
+    # workflow = relationship("Workflow")
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -36,16 +45,14 @@ class User(db.Model, UserMixin):
                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
                 value = value[0]
 
-            if property == "password":
-                value = hash_pass(value)  # we need bytes here (not plain str)
-
-            if property == "registered_on":
-                value = datetime.datetime.now()
+            # if property == "password":
+            #    value = hash_pass(value)  # we need bytes here (not plain str)
+            #
 
             setattr(self, property, value)
 
     def __repr__(self):
-        return str(self.username)
+        return "<User {}>".format(self.username)
 
 
 @login_manager.user_loader
