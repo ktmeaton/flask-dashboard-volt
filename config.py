@@ -4,6 +4,9 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from decouple import config
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
@@ -12,14 +15,21 @@ class Config(object):
     DEBUG = True
 
     # Set up the App SECRET_KEY
-    # Used by:
-    #   flask-WTF (protect against CSRF)
     SECRET_KEY = config("SECRET_KEY")
     SECURITY_PASSWORD_SALT = config("SECURITY_PASSWORD_SALT")
     JWT_SECRET_KEY = SECRET_KEY
 
-    # This will create a file in <app> FOLDER
-    SQLALCHEMY_DATABASE_URI = config("DATABASE_URL")
+    # Database Config, default to sqlite
+    SQLALCHEMY_DATABASE_URI = config(
+        "DATABASE_URL",
+        default="sqlite:///" + os.path.join(basedir, "flowdash_bio.sqlite3"),
+    )
+    # Database Config alterate, default to postgres
+    # SQLALCHEMY_DATABASE_URI = config(
+    # "DATABASE_URL",
+    # default=("postgresql://postgres:postgres@localhost:5432/"
+    #          + os.path.join(basedir, "flowdash_bio"))
+    # )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Security settings
