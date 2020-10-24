@@ -11,13 +11,24 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
 
-    # Assume DEBUG by default
-    DEBUG = True
+    # Flask App General
+    FLASK_APP = config("FLASK_APP", default="run.py")
+    FLASK_ENV = config("FLASK_ENV", default="development")
+    DEBUG = config("DEBUG", default=True)
+    TEMPLATES_AUTO_RELOAD = config("TEMPLATES_AUTO_RELOAD", default=True)
 
-    # Set up the App SECRET_KEY
-    SECRET_KEY = config("SECRET_KEY")
-    SECURITY_PASSWORD_SALT = config("SECURITY_PASSWORD_SALT")
-    JWT_SECRET_KEY = SECRET_KEY
+    # Security
+    SECRET_KEY = config("SECRET_KEY", default="S3cr3t_K#Key")
+    SECURITY_PASSWORD_SALT = config(
+        "SECURITY_PASSWORD_SALT", default="S3cr3t_K#SaltPass"
+    )
+
+    # Mail
+    APP_MAIL_USERNAME = config("APP_MAIL_USERNAME", default="myGmailUsername")
+    APP_MAIL_PASSWORD = config("APP_MAIL_PASSWORD", default="myGmailPassword")
+    MAIL_DEFAULT_SENDER = config(
+        "MAIL_DEFAULT_SENDER", default="flowdash.bio@gmail.com"
+    )
 
     # Database Config, default to sqlite
     SQLALCHEMY_DATABASE_URI = config(
@@ -39,7 +50,7 @@ class Config(object):
     DEBUG_TB_ENABLED = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     # Remove "Bearer from the JWT header"
-    JWT_HEADER_TYPE = None
+    # JWT_HEADER_TYPE = None
 
     # Email settings
     MAIL_SERVER = "smtp.googlemail.com"

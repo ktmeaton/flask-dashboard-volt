@@ -13,7 +13,6 @@ dependencies:
   - email-validator=1.1.1
   - python-decouple=3.3
   - gunicorn=20.0.4
-  - waitress=1.4.3
   - python-dotenv=0.14.0
   - flask-bootstrap=3.3.7.1
   - flask-mail=0.9.1
