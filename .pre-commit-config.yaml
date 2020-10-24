@@ -12,7 +12,6 @@ repos:
     hooks:
       - id: black
         language_version: python3.8
-        exclude: ^migrations/
 
   # flake8: Python PEP8 Compliance
   - repo: https://gitlab.com/pycqa/flake8
@@ -23,7 +22,6 @@ repos:
         'flake8-bugbear==20.1.4'
       ]
       args: [--config=setup.cfg]
-      exclude: ^migrations/
 
   # General Text + YAML Lint
   - repo: https://github.com/pre-commit/pre-commit-hooks
