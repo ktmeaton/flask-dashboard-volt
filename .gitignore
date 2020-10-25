@@ -19,7 +19,7 @@ venv
 
 # secrets
 .env-secret
-heroku-config.sh
+heroku-config-secret.sh
 
 # other
 .DS_Store
