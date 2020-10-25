@@ -108,10 +108,22 @@ pg_ctl -D local-psql-db -l stop
 ```bash
 # Migrate and upgrade local database.
 flask db stamp head
-flask db migrate -m "informative comment about changes"
+flask db migrate -m "informative comment about changes: local"
 flask db upgrade
-# Confirm the app runs correctly
+# --> Confirm the app runs locally
 
+# Commit the changes to source control
+git add -A
+git commit -m "informative comment about changes"
+git push origin
+# The app will build on heroku, but running it will generate an internal server error
+
+# Upgrade the staging database
+export DATABASE_URL=`heroku config:get --remote staging DATABASE_URL`
+flask db stamp head
+flask db migrate -m "informative comment about changes: staging"
+flask db upgrade
+# --> Confirm the app runs on staging
 ```
 
 ## Credits & Links
