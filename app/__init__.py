@@ -27,6 +27,7 @@ naming_convention = {
 
 db = SQLAlchemy(metadata=schema.MetaData(naming_convention=naming_convention))
 login_manager = LoginManager()
+login_manager.login_view = "base_blueprint.login"
 mail = Mail()
 csrf = CSRFProtect()
 jwt = JWTManager()

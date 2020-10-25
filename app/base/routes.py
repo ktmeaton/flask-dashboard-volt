@@ -5,12 +5,13 @@ Copyright (c) 2019 - present AppSeed.us
 
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import current_user, login_user, logout_user
-from app import db, login_manager
+from app import db  # , login_manager
 from app.base import blueprint
 from app.base.forms import LoginForm, CreateAccountForm
 from app.base.models import User
 from app.base.token import generate_confirmation_token, confirm_token
 from app.base.email import send_email
+from werkzeug.urls import url_parse
 
 # import datetime  # confirmed_on
 
@@ -73,7 +74,11 @@ def login():
         # Valid login
         elif user and user.check_password(login_form.password.data):
             login_user(user, remember=login_form.remember_me.data)
-            return redirect(url_for("home_blueprint.index"))
+            next_page = request.args.get("next")
+            # only allow relative links
+            if not next_page or url_parse(next_page).netloc != "":
+                next_page = url_for("home_blueprint.index")
+            return redirect(next_page)
         # Unhandled
         else:
             flash("Unknown error.", "error")
@@ -160,7 +165,6 @@ def confirm_email(token):
     # Check for valid confirmation token
     try:
         email = confirm_token(token)
-        print("EMAIL:", email)
     except Exception:
         flash("The confirmation link is invalid or has expired.", "error")
         return redirect(url_for("base_blueprint.login"))
@@ -201,9 +205,10 @@ def shutdown():
 # -----------------------------------------------------------------------------#
 
 
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return render_template("errors/page-403.html"), 403
+# @login_manager.unauthorized_handler
+# def unauthorized_handler():
+#    flash("Please login to access the requested page.", "info")
+#    return redirect(url_for("base_blueprint.login"))
 
 
 @blueprint.errorhandler(403)

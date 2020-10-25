@@ -77,9 +77,6 @@ def database():
             .all()
         )
 
-        for item in check_workflow:
-            print(item.id, item)
-
         # Add workflow to database if it can't be found
         if len(check_workflow) == 1:
             db.session.add(new_workflow)
@@ -126,7 +123,6 @@ def database():
 @blueprint.route("/workflows", methods=["GET", "POST"])
 @login_required
 def workflows():
-    print(Workflow.query.order_by(Workflow.start_date.desc()).all())
     data = Workflow.query.filter(Workflow.user == current_user).all()
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)

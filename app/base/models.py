@@ -9,6 +9,7 @@ from sqlalchemy.orm import relationship
 from app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.home.models import Workflow  # noqa, flake8 issue
+from hashlib import md5
 
 # import datetime
 
@@ -23,6 +24,7 @@ class User(db.Model, UserMixin):
     password_hash = Column(String(128))
     remember_me = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
+    avatar = Column(String(128))
 
     # Relationships
     workflows = relationship("Workflow", backref="user", lazy="dynamic")
@@ -41,6 +43,8 @@ class User(db.Model, UserMixin):
 
             setattr(self, property, value)
 
+        self.set_avatar()
+
     def __repr__(self):
         return "<User {}>".format(self.username)
 
@@ -49,6 +53,13 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def set_avatar(self, size=128):
+        digest = md5(self.email.lower().encode("utf-8")).hexdigest()
+        avatar_url = "https://www.gravatar.com/avatar/{}?d=identicon&s={}".format(
+            digest, size
+        )
+        self.avatar = avatar_url
 
 
 @login_manager.user_loader
