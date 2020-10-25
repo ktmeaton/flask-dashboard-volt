@@ -7,6 +7,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import schema
 from importlib import import_module
 from flask_mail import Mail
 
@@ -14,7 +15,15 @@ from flask_wtf.csrf import CSRFProtect  # Form security
 from flask_bootstrap import Bootstrap  # Bootstrap WTF Forms
 from flask_jwt_extended import JWTManager  # Web tokens
 
-db = SQLAlchemy()
+
+naming_convention = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(column_0_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
+}
+db = SQLAlchemy(metadata=schema.MetaData(naming_convention=naming_convention))
 login_manager = LoginManager()
 mail = Mail()
 csrf = CSRFProtect()
@@ -49,7 +58,11 @@ def create_app(config):
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)
-    migrate.init_app(app, db)
+    with app.app_context():
+        if db.engine.url.drivername == "sqlite":
+            migrate.init_app(app, db, render_as_batch=True)
+        else:
+            migrate.init_app(app, db)
     mail.init_app(app)
     csrf.init_app(app)
     jwt.init_app(app)

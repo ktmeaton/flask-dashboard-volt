@@ -64,8 +64,6 @@ def get_segment(request):
 @blueprint.route("/database", methods=["GET", "POST"])
 @login_required
 def database():
-    # Need to do user auth here when posting
-    flash("test flash", "info")
     workflow_form = WorkflowForm(request.form)
     # -------------------------------------------------------------------------#
     # POST Request - Valid

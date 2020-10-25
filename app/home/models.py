@@ -3,7 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from sqlalchemy import Integer, String, Column, DateTime  # , ForeignKey
+from sqlalchemy import Integer, String, Column, DateTime, ForeignKey
 from app import db
 import datetime
 
@@ -26,6 +26,7 @@ class Workflow(db.Model):
     )
     end_date = Column(DateTime, unique=False, nullable=True)
     username = Column(String(64), index=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
 
     # Relationships
     # user_id = Column(Integer, ForeignKey('user.id'))
