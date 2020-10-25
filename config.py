@@ -19,9 +19,6 @@ class Config(object):
 
     # Security
     SECRET_KEY = config("SECRET_KEY", default="S3cr3t_K#Key")
-    SECURITY_PASSWORD_SALT = config(
-        "SECURITY_PASSWORD_SALT", default="S3cr3t_K#SaltPass"
-    )
 
     # Mail
     APP_MAIL_USERNAME = config("APP_MAIL_USERNAME", default="myGmailUsername")
