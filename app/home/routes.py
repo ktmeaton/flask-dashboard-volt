@@ -70,33 +70,30 @@ def database():
     if workflow_form.validate_on_submit():
         new_workflow = Workflow(**request.form, user=current_user)
 
-        # For some reason, gets automatically added. Delete for now.
-        recent_id = max(db.session.query(Workflow.id).all())[0]
-        Workflow.query.filter(Workflow.id == recent_id).delete()
-
         check_workflow = (
-            Workflow.query.filter(Workflow.system == new_workflow.system)
-            .filter(Workflow.node == new_workflow.node)
+            Workflow.query.filter(Workflow.node == new_workflow.node)
             .filter(Workflow.total_jobs == new_workflow.total_jobs)
             .filter(Workflow.user == new_workflow.user)
-            .first()
+            .all()
         )
 
+        for item in check_workflow:
+            print(item.id, item)
+
         # Add workflow to database if it can't be found
-        if not check_workflow:
+        if len(check_workflow) == 1:
             db.session.add(new_workflow)
-            db.session.commit()
             flash(
                 "New workflow added for "
-                + "<br>System: {0}".format(workflow_form.system.data)
-                + "<br>Node: {0}".format(workflow_form.node.data)
-                + "<br>Jobs: {0}".format(workflow_form.total_jobs.data),
+                + "<br>System: {0}".format(new_workflow.system)
+                + "<br>Node: {0}".format(new_workflow.node)
+                + "<br>Jobs: {0}".format(new_workflow.total_jobs),
                 "info",
             )
         # Otherwise update workflow jobs in database
         else:
             (
-                Workflow.query.filter_by(id=check_workflow.id).update(
+                Workflow.query.filter_by(id=check_workflow[0].id).update(
                     dict(
                         completed_jobs=new_workflow.completed_jobs,
                         running_jobs=new_workflow.running_jobs,
@@ -107,14 +104,19 @@ def database():
                     )
                 )
             )
-            db.session.commit()
             flash(
                 "Updated workflow for "
-                + "<br>System: {0}".format(workflow_form.system.data)
-                + "<br>Node: {0}".format(workflow_form.node.data)
-                + "<br>Jobs: {0}".format(workflow_form.total_jobs.data),
+                + "<br>System: {0}".format(new_workflow.system)
+                + "<br>Node: {0}".format(new_workflow.node)
+                + "<br>Jobs: {0}".format(new_workflow.total_jobs),
                 "info",
             )
+            # For some reason, new_workflow gets automatically added. Delete for now.
+            recent_id = max(db.session.query(Workflow.id).all())[0]
+            print(recent_id)
+            Workflow.query.filter(Workflow.id == recent_id).delete()
+
+        db.session.commit()
         return redirect(url_for("home_blueprint.workflows"))
 
     else:

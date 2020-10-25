@@ -11,7 +11,6 @@ from wtforms.validators import DataRequired, InputRequired
 
 
 class WorkflowForm(FlaskForm):
-    system = StringField("System", validators=[DataRequired()])
     node = StringField("Node", validators=[DataRequired()])
     total_jobs = IntegerField("Total Jobs", validators=[DataRequired()])
     completed_jobs = IntegerField("Completed Jobs", validators=[InputRequired()])

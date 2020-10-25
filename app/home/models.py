@@ -6,6 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 from sqlalchemy import Integer, String, Column, DateTime, ForeignKey
 from app import db
 import datetime
+from app.home.systems import system_map
 
 
 class Workflow(db.Model):
@@ -13,7 +14,6 @@ class Workflow(db.Model):
     __tablename__ = "workflow"
 
     id = Column(Integer, primary_key=True)
-    system = Column(String(64), unique=False, default="NA")
     node = Column(String(64), unique=False, default="N/A")
     total_jobs = Column(Integer, unique=False, default=0)
     completed_jobs = Column(Integer, unique=False, default=0, nullable=True)
@@ -25,8 +25,10 @@ class Workflow(db.Model):
     end_date = Column(DateTime, unique=False, nullable=True)
     user_id = Column(Integer, ForeignKey("user.id"))
 
+    # Inferred attributes
     status = Column(String(64), unique=False, default="N/A")
     progress = Column(Integer, unique=False, default=0)
+    system = Column(String(64), unique=False, default="NA")
 
     # Relationships
     # username will be a backref from model User
@@ -46,7 +48,12 @@ class Workflow(db.Model):
 
             setattr(self, property, value)
 
-        # Dynamic attributes
+        # Inferred attributes
+        for system in system_map:
+            for node in system_map[system]:
+                if node in self.node:
+                    self.system = system
+
         self.progress = int(int(self.completed_jobs) / int(self.total_jobs) * 100)
         self.status = (
             "Failed"
