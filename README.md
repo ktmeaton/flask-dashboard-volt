@@ -106,6 +106,13 @@ pg_ctl -D local-psql-db -l stop
 > First, make changes to the =database schema.
 
 ```bash
+# Initialize with a blank database
+DATABASE_URL=sqlite:///
+flask db init
+flask db migrate -m "empty database"
+flask db upgrade
+git push origin
+
 # Migrate and upgrade local database.
 flask db stamp head
 flask db migrate -m "informative comment about changes: local"
@@ -118,12 +125,23 @@ git commit -m "informative comment about changes"
 git push origin
 # The app will build on heroku, but running it will generate an internal server error
 
+heroku run --remote staging flask db stamp head
+heroku run --remote staging flask db upgrade
+```
+
+```bash
 # Upgrade the staging database
 export DATABASE_URL=`heroku config:get --remote staging DATABASE_URL`
 flask db stamp head
 flask db migrate -m "informative comment about changes: staging"
 flask db upgrade
 # --> Confirm the app runs on staging
+
+# Upgrade the production database
+export DATABASE_URL=`heroku config:get --remote production DATABASE_URL`
+flask db stamp head
+flask db migrate -m "informative comment about changes: production"
+flask db upgrade
 ```
 
 ## Credits & Links
