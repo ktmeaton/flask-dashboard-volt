@@ -101,6 +101,19 @@ psql -U postgres flowdash-bio -c "SELECT * FROM \"User\""
 pg_ctl -D local-psql-db -l stop
 ```
 
+### Migration Workflow
+
+> First, make changes to the =database schema.
+
+```bash
+# Migrate and upgrade local database.
+flask db stamp head
+flask db migrate -m "informative comment about changes"
+flask db upgrade
+# Confirm the app runs correctly
+
+```
+
 ## Credits & Links
 
 - [Flask Framework](https://www.palletsprojects.com/p/flask/) - The offcial website
