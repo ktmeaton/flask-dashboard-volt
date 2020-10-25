@@ -25,7 +25,7 @@ class Workflow(db.Model):
         DateTime, unique=False, index=True, default=datetime.datetime.utcnow
     )
     end_date = Column(DateTime, unique=False, nullable=True)
-    username = Column(String(64), index=True)
+    # username = Column(String(64), index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
 
     # Relationships

@@ -7,6 +7,7 @@ from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, Boolean  # , ForeignKey
 
 # Binary, DateTime
+
 # from sqlalchemy.orm import relationship
 
 from app import db, login_manager
@@ -30,6 +31,7 @@ class User(db.Model, UserMixin):
     confirmed = Column(Boolean, default=False)
 
     # Relationships
+    # workflows = relationship("Workflow", backref="userinfo", lazy="dynamic")
     # workflow_id = Column(Integer, ForeignKey("workflow.id"))
     # workflow = relationship("Workflow")
 
