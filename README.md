@@ -95,7 +95,7 @@ createdb --owner=postgres flowdash-bio
 psql -U postgres -c "\l"
 
 # Go register a new account via the web app, and check if they show up in the database
-psql -U postgres flowdash-bio -c "SELECT * FROM \"User\""
+psql -U postgres flowdash-bio -c "SELECT * FROM \"user\""
 
 # Stop database server when finished
 pg_ctl -D local-psql-db -l stop
@@ -106,13 +106,20 @@ pg_ctl -D local-psql-db -l stop
 > First, make changes to the =database schema.
 
 ```bash
-flask db stamp head
-flask db migrate -m "empty database"
+# migrate local database
+flask db migrate -m "informative comment about changes"
 flask db upgrade
-
 git add -A
 git commit -m "informative comment about changes"
 git push origin
+
+# Staging app automatically builds/syncs from github, all good. If not:
+git push staging
+heroku run --remote staging flask db upgrade
+
+# Upgrade production database
+git push production
+heroku run --remote production flask db upgrade
 ```
 
 ## Credits & Links
