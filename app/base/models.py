@@ -24,7 +24,7 @@ class User(db.Model, UserMixin):
     password_hash = Column(String(128))
     remember_me = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
-    is_admin = Column(Boolean, default=False)
+    # is_admin = Column(Boolean, default=False)
     avatar = Column(String(128))
     registered_on = Column(
         DateTime, unique=False, index=True, default=datetime.datetime.utcnow
