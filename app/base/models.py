@@ -25,6 +25,7 @@ class User(db.Model, UserMixin):
     remember_me = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
     test_field = Column(Boolean, default=False)
+    test_field2 = Column(Boolean, default=False)
     avatar = Column(String(128))
     registered_on = Column(
         DateTime, unique=False, index=True, default=datetime.datetime.utcnow
