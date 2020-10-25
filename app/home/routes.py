@@ -65,21 +65,30 @@ def get_segment(request):
 @login_required
 def database():
     # Need to do user auth here when posting
+    flash("test flash", "info")
     workflow_form = WorkflowForm(request.form)
     # -------------------------------------------------------------------------#
     # POST Request - Valid
     if workflow_form.validate_on_submit():
         new_workflow = Workflow(**request.form)
 
+        # Don't add workflow if username isn't current user
+        if new_workflow.username != current_user.username:
+            flash(
+                "The workflow username is different from the current user.", "warning"
+            )
+            return render_template("database-enter.html", form=workflow_form)
+
         check_workflow = (
             db.session.query(Workflow)
             .filter(Workflow.system == new_workflow.system)
             .filter(Workflow.node == new_workflow.node)
             .filter(Workflow.total_jobs == new_workflow.total_jobs)
-            # .filter(Workflow.username == new_workflow.username)
-            # .filter(Workflow.start_date == new_workflow.start_date)
+            .filter(Workflow.username == new_workflow.username)
             .first()
         )
+
+        print(new_workflow.start_date)
         # Add workflow to database if it can't be found
         if not check_workflow:
             db.session.add(new_workflow)
@@ -93,9 +102,7 @@ def database():
         # Otherwise update workflow jobs in database
         else:
             (
-                db.session.query(Workflow)
-                .filter_by(id=check_workflow.id)
-                .update(
+                Workflow.query.filter_by(id=check_workflow.id).update(
                     dict(
                         status=new_workflow.status,
                         progress=new_workflow.progress,
@@ -122,6 +129,6 @@ def database():
 @blueprint.route("/workflows", methods=["GET", "POST"])
 @login_required
 def workflows():
-    data = Workflow.query.filter(Workflow.username == str(current_user)).all()
+    data = Workflow.query.filter(Workflow.username == current_user.username).all()
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)

@@ -27,10 +27,7 @@ class User(db.Model, UserMixin):
     email = Column(String(120), unique=True, index=True)
     password = Column(String(128))
     remember_me = Column(Boolean, default=False)
-    # registered_on = Column(DateTime, nullable=True)
-    # admin = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
-    # confirmed_on = Column(DateTime, nullable=True)
 
     # Relationships
     # workflow_id = Column(Integer, ForeignKey("workflow.id"))

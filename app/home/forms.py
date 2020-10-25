@@ -16,8 +16,8 @@ class WorkflowForm(FlaskForm):
     status = StringField("Status", validators=[DataRequired()])
     progress = IntegerField("Progress", validators=[DataRequired()])
     total_jobs = IntegerField("Total Jobs", validators=[DataRequired()])
-    completed_jobs = IntegerField("Completed Jobs", validators=[DataRequired()])
-    running_jobs = IntegerField("Running Jobs", validators=[DataRequired()])
+    completed_jobs = IntegerField("Completed Jobs", validators=[InputRequired()])
+    running_jobs = IntegerField("Running Jobs", validators=[InputRequired()])
     failed_jobs = IntegerField("Failed Jobs", validators=[InputRequired()])
     # start_date = DateField("Start Date",
     #                        format="%Y-%m-%d",

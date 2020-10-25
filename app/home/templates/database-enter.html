@@ -65,10 +65,13 @@
             </div>
         </div>
 
-        <div class="col-16 d-flex align-items-center">
+        <div class="d-flex col-3">
             {% import "bootstrap/wtf.html" as wtf %}
+
             <form action="" method="post" class="form" role="form">
-              {{ form.csrf_token() }}
+
+              {{ form.hidden_tag() }}
+
               {{ wtf.form_field(form.system, class='form-control', type='text', placeholder='System', default="Compute Canada") }}
               {{ wtf.form_field(form.node, class='form-control', type='text', placeholder='Node', default="cedar1") }}
               {{ wtf.form_field(form.status, class='form-control', type='text', placeholder='Status', default="Running") }}
@@ -77,8 +80,6 @@
               {{ wtf.form_field(form.completed_jobs, class='form-control', type='number', placeholder='Completed Jobs', default=5) }}
               {{ wtf.form_field(form.running_jobs, class='form-control', type='number', placeholder='Running Jobs', default=2) }}
               {{ wtf.form_field(form.failed_jobs, class='form-control', type='number', placeholder='Failed Jobs', default=0) }}
-              {{ wtf.form_field(form.start_date, class='form-control', type='date', placeholder='Start Date', default='1900-01-01') }}
-              {{ wtf.form_field(form.end_date, class='form-control', type='date', placeholder='End Date', default=None) }}
               {{ wtf.form_field(form.username, class='form-control', type='text', placeholder='Username', default='admin') }}
              <input type=submit class='btn btn-info btn-block mt-3'>
             </form>

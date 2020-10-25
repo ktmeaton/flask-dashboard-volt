@@ -18,13 +18,14 @@ class Workflow(db.Model):
     status = Column(String(64), unique=False)
     progress = Column(Integer, unique=False)
     total_jobs = Column(Integer, unique=False)
-    completed_jobs = Column(Integer, unique=False)
-    running_jobs = Column(Integer, unique=False)
+    completed_jobs = Column(Integer, unique=False, nullable=True)
+    running_jobs = Column(Integer, unique=False, nullable=True)
     failed_jobs = Column(Integer, unique=False, nullable=True)
     start_date = Column(
         DateTime, unique=False, index=True, default=datetime.datetime.utcnow
     )
     end_date = Column(DateTime, unique=False, nullable=True)
+    username = Column(String(64), index=True)
 
     # Relationships
     # user_id = Column(Integer, ForeignKey('user.id'))

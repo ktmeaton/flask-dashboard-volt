@@ -15,17 +15,16 @@ from app.base.util import verify_pass
 from app.base.token import generate_confirmation_token, confirm_token
 from app.base.email import send_email
 
-import datetime  # confirmed_on
+# import datetime  # confirmed_on
 
 from smtplib import SMTPAuthenticationError
 
 # -----------------------------------------------------------------------------#
 # Account
 # -----------------------------------------------------------------------------#
-# Login
+# Default path routes to login
 @blueprint.route("/")
 def route_default():
-    print(current_user.workflow)
     return redirect(url_for("base_blueprint.login"))
 
 
@@ -47,8 +46,8 @@ def login():
         username = login_form.username.data
         password = login_form.password.data
         # remember_me = True if "remember_me" in request.form else False
-        # Locate user
-        user = db.session.query(User).filter_by(username=username).first()
+
+        user = User.query.filter_by(username=username).first()
 
         # Username and password are valid but account not confirmed
         if user and verify_pass(password, user.password) and not user.confirmed:
@@ -123,9 +122,8 @@ def register():
                 form=create_account_form,
             )
 
-        # Create user from from data
+        # Create user from data
         user = User(**request.form)
-        user.registered_on = datetime.datetime.now()
 
         # Send an activation email
         confirmation_token = generate_confirmation_token(user.email)
@@ -173,7 +171,6 @@ def confirm_email(token):
         flash("Account already confirmed.", "success")
     else:
         user.confirmed = True
-        user.confirmed_on = datetime.datetime.now()
         db.session.add(user)
         db.session.commit()
         flash("You have confirmed your account. Thanks!", "success")
