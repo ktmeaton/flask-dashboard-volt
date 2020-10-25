@@ -112,9 +112,9 @@ def database():
                 "info",
             )
             # For some reason, new_workflow gets automatically added. Delete for now.
-            recent_id = max(db.session.query(Workflow.id).all())[0]
-            print(recent_id)
-            Workflow.query.filter(Workflow.id == recent_id).delete()
+            db.session.delete(new_workflow)
+            # recent_id = max(db.session.query(Workflow.id).all())[0]
+            # Workflow.query.filter(Workflow.id == recent_id).delete()
 
         db.session.commit()
         return redirect(url_for("home_blueprint.workflows"))
@@ -126,6 +126,7 @@ def database():
 @blueprint.route("/workflows", methods=["GET", "POST"])
 @login_required
 def workflows():
+    print(Workflow.query.order_by(Workflow.start_date.desc()).all())
     data = Workflow.query.filter(Workflow.user == current_user).all()
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)

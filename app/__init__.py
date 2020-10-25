@@ -16,6 +16,7 @@ from flask_bootstrap import Bootstrap  # Bootstrap WTF Forms
 from flask_jwt_extended import JWTManager  # Web tokens
 
 
+# Naming Convention for SQLite rendering in batch
 naming_convention = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -23,6 +24,7 @@ naming_convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
     "pk": "pk_%(table_name)s",
 }
+
 db = SQLAlchemy(metadata=schema.MetaData(naming_convention=naming_convention))
 login_manager = LoginManager()
 mail = Mail()

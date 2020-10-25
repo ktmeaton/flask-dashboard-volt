@@ -4,19 +4,13 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, Boolean  # , ForeignKey
-
-# Binary, DateTime
-
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
-
 from app import db, login_manager
-
-# from app.base.util import hash_pass
+from werkzeug.security import generate_password_hash, check_password_hash
+from app.home.models import Workflow  # noqa, flake8 issue
 
 # import datetime
-
-from app.home.models import Workflow  # noqa, flake8 issue
 
 
 class User(db.Model, UserMixin):
@@ -26,7 +20,7 @@ class User(db.Model, UserMixin):
     id = Column(Integer, primary_key=True)
     username = Column(String(64), unique=True, index=True)
     email = Column(String(120), unique=True, index=True)
-    password = Column(String(128))
+    password_hash = Column(String(128))
     remember_me = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
 
@@ -42,29 +36,24 @@ class User(db.Model, UserMixin):
                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
                 value = value[0]
 
-            # if property == "password":
-            #    value = hash_pass(value)  # we need bytes here (not plain str)
-            #
+            if property == "password":
+                self.set_password(value)
 
             setattr(self, property, value)
 
     def __repr__(self):
         return "<User {}>".format(self.username)
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password, method="pbkdf2:sha256")
 
-# Test Object
-test_user = User(
-    username="test",
-    email="test@domain.com",
-    password="pass",
-    remember_me=0,
-    confirmed=0,
-)
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 @login_manager.user_loader
-def user_loader(id):
-    return User.query.filter_by(id=id).first()
+def load_user(id):
+    return User.query.get(int(id))
 
 
 @login_manager.request_loader
