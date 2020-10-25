@@ -4,14 +4,14 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.home.models import Workflow  # noqa, flake8 issue
 from hashlib import md5
 
-# import datetime
+import datetime
 
 
 class User(db.Model, UserMixin):
@@ -25,6 +25,9 @@ class User(db.Model, UserMixin):
     remember_me = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
     avatar = Column(String(128))
+    registered_on = Column(
+        DateTime, unique=False, index=True, default=datetime.datetime.utcnow
+    )
 
     # Relationships
     workflows = relationship("Workflow", backref="user", lazy="dynamic")

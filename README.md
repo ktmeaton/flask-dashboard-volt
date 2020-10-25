@@ -46,8 +46,8 @@ heroku create flowdash-bio
 heroku create flowdash-bio-stage
 
 # Add production and staging remotes
-git remote add production git@heroku.com:flowdash-bio.git
-git remote add staging git@heroku.com:flowdash-bio-stage.git
+git remote add production https://git.heroku.com/flowdash-bio.git
+git remote add staging https://git.heroku.com/flowdash-bio-stage.git
 
 # Configure database
 heroku addons:create --remote production heroku-postgresql:hobby-dev
@@ -61,7 +61,7 @@ heroku addons:create --remote staging heroku-postgresql:hobby-dev
 heroku config --remote staging
 heroku config --remote production
 
-# Trigger the LIVE deploy
+# Update the staging app
 git push heroku staging
 
 $ # Open the LIVE app in browser
