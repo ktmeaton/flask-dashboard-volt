@@ -74,13 +74,10 @@
 
               {{ wtf.form_field(form.system, class='form-control', type='text', placeholder='System', default="Compute Canada") }}
               {{ wtf.form_field(form.node, class='form-control', type='text', placeholder='Node', default="cedar1") }}
-              {{ wtf.form_field(form.status, class='form-control', type='text', placeholder='Status', default="Running") }}
-              {{ wtf.form_field(form.progress, class='form-control', type='number', placeholder='Status', default=50) }}
               {{ wtf.form_field(form.total_jobs, class='form-control', type='number', placeholder='Total Jobs', default=10) }}
               {{ wtf.form_field(form.completed_jobs, class='form-control', type='number', placeholder='Completed Jobs', default=5) }}
               {{ wtf.form_field(form.running_jobs, class='form-control', type='number', placeholder='Running Jobs', default=2) }}
               {{ wtf.form_field(form.failed_jobs, class='form-control', type='number', placeholder='Failed Jobs', default=0) }}
-              {{ wtf.form_field(form.username, class='form-control', type='text', placeholder='Username', default='admin') }}
              <input type=submit class='btn btn-info btn-block mt-3'>
             </form>
         </div>

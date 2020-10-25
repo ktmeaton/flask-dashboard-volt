@@ -68,25 +68,20 @@ def database():
     # -------------------------------------------------------------------------#
     # POST Request - Valid
     if workflow_form.validate_on_submit():
-        new_workflow = Workflow(**request.form)
+        new_workflow = Workflow(**request.form, user=current_user)
 
-        # Don't add workflow if username isn't current user
-        if new_workflow.username != current_user.username:
-            flash(
-                "The workflow username is different from the current user.", "warning"
-            )
-            return render_template("database-enter.html", form=workflow_form)
+        # For some reason, gets automatically added. Delete for now.
+        recent_id = max(db.session.query(Workflow.id).all())[0]
+        Workflow.query.filter(Workflow.id == recent_id).delete()
 
         check_workflow = (
-            db.session.query(Workflow)
-            .filter(Workflow.system == new_workflow.system)
+            Workflow.query.filter(Workflow.system == new_workflow.system)
             .filter(Workflow.node == new_workflow.node)
             .filter(Workflow.total_jobs == new_workflow.total_jobs)
-            .filter(Workflow.username == new_workflow.username)
+            .filter(Workflow.user == new_workflow.user)
             .first()
         )
 
-        print(new_workflow.start_date)
         # Add workflow to database if it can't be found
         if not check_workflow:
             db.session.add(new_workflow)
@@ -95,19 +90,20 @@ def database():
                 "New workflow added for "
                 + "<br>System: {0}".format(workflow_form.system.data)
                 + "<br>Node: {0}".format(workflow_form.node.data)
-                + "<br>Jobs: {0}".format(workflow_form.total_jobs.data)
+                + "<br>Jobs: {0}".format(workflow_form.total_jobs.data),
+                "info",
             )
         # Otherwise update workflow jobs in database
         else:
             (
                 Workflow.query.filter_by(id=check_workflow.id).update(
                     dict(
-                        status=new_workflow.status,
-                        progress=new_workflow.progress,
                         completed_jobs=new_workflow.completed_jobs,
                         running_jobs=new_workflow.running_jobs,
                         failed_jobs=new_workflow.failed_jobs,
                         end_date=new_workflow.end_date,
+                        progress=new_workflow.progress,
+                        status=new_workflow.status,
                     )
                 )
             )
@@ -116,7 +112,8 @@ def database():
                 "Updated workflow for "
                 + "<br>System: {0}".format(workflow_form.system.data)
                 + "<br>Node: {0}".format(workflow_form.node.data)
-                + "<br>Jobs: {0}".format(workflow_form.total_jobs.data)
+                + "<br>Jobs: {0}".format(workflow_form.total_jobs.data),
+                "info",
             )
         return redirect(url_for("home_blueprint.workflows"))
 
@@ -127,6 +124,6 @@ def database():
 @blueprint.route("/workflows", methods=["GET", "POST"])
 @login_required
 def workflows():
-    data = Workflow.query.filter(Workflow.username == current_user.username).all()
+    data = Workflow.query.filter(Workflow.user == current_user).all()
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)

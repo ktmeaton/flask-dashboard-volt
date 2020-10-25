@@ -8,7 +8,7 @@ from sqlalchemy import Column, Integer, String, Boolean  # , ForeignKey
 
 # Binary, DateTime
 
-# from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship
 
 from app import db, login_manager
 
@@ -16,7 +16,7 @@ from app import db, login_manager
 
 # import datetime
 
-# from app.home.models import Workflow
+from app.home.models import Workflow  # noqa, flake8 issue
 
 
 class User(db.Model, UserMixin):
@@ -31,9 +31,7 @@ class User(db.Model, UserMixin):
     confirmed = Column(Boolean, default=False)
 
     # Relationships
-    # workflows = relationship("Workflow", backref="userinfo", lazy="dynamic")
-    # workflow_id = Column(Integer, ForeignKey("workflow.id"))
-    # workflow = relationship("Workflow")
+    workflows = relationship("Workflow", backref="user", lazy="dynamic")
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -52,6 +50,16 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return "<User {}>".format(self.username)
+
+
+# Test Object
+test_user = User(
+    username="test",
+    email="test@domain.com",
+    password="pass",
+    remember_me=0,
+    confirmed=0,
+)
 
 
 @login_manager.user_loader

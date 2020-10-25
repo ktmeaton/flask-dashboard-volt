@@ -13,34 +13,50 @@ class Workflow(db.Model):
     __tablename__ = "workflow"
 
     id = Column(Integer, primary_key=True)
-    system = Column(String(64), unique=False)
-    node = Column(String(64), unique=False)
-    status = Column(String(64), unique=False)
-    progress = Column(Integer, unique=False)
-    total_jobs = Column(Integer, unique=False)
-    completed_jobs = Column(Integer, unique=False, nullable=True)
-    running_jobs = Column(Integer, unique=False, nullable=True)
-    failed_jobs = Column(Integer, unique=False, nullable=True)
+    system = Column(String(64), unique=False, default="NA")
+    node = Column(String(64), unique=False, default="N/A")
+    total_jobs = Column(Integer, unique=False, default=0)
+    completed_jobs = Column(Integer, unique=False, default=0, nullable=True)
+    running_jobs = Column(Integer, unique=False, default=0, nullable=True)
+    failed_jobs = Column(Integer, unique=False, default=0, nullable=True)
     start_date = Column(
         DateTime, unique=False, index=True, default=datetime.datetime.utcnow
     )
     end_date = Column(DateTime, unique=False, nullable=True)
-    # username = Column(String(64), index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
 
+    status = Column(String(64), unique=False, default="N/A")
+    progress = Column(Integer, unique=False, default=0)
+
     # Relationships
-    # user_id = Column(Integer, ForeignKey('user.id'))
+    # username will be a backref from model User
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, "__iter__") and not isinstance(value, str):
+            if (
+                hasattr(value, "__iter__")
+                and not isinstance(value, str)
+                and property != "user"
+            ):
                 # the ,= unpack of a singleton fails PEP8 (travis flake8 test)
                 value = value[0]
 
             setattr(self, property, value)
+
+        # Dynamic attributes
+        self.progress = int(int(self.completed_jobs) / int(self.total_jobs) * 100)
+        self.status = (
+            "Failed"
+            if int(self.failed_jobs) > 0
+            else ("Completed" if int(self.progress) == 100 else "Running")
+        )
+        if self.progress == 100 or self.status == "Failed":
+            self.end_date = datetime.datetime.utcnow()
+        else:
+            self.end_date = None
 
     def __repr__(self):
         return "<System {}; Node {}; Total Jobs {}>".format(
@@ -62,3 +78,4 @@ class Workflow(db.Model):
 
     def end(self):
         self.end_date = datetime.datetime.utcnow
+        return self.end_date

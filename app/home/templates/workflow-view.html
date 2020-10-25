@@ -104,6 +104,8 @@
                           <td class="font-weight-bold text-warning">{{ workflow.status }}</td>
                         {% elif workflow.status == "Failed" %}
                           <td class="font-weight-bold text-danger">{{ workflow.status }}</td>
+                        {% else %}
+                          <td class="font-weight-bold">{{ workflow.status }}</td>
                         {% endif %}
                         <!-- Progress -->
                         <td class="border-0">
@@ -111,7 +113,7 @@
                                 <div class="col-12 col-xl-2 px-0">
                                     <div class="small font-weight-bold">{{workflow.progress}}%</div>
                                 </div>
-                                <div class="col-12 col-xl-10 px-0 px-xl-2">
+                                <div class="col-12 col-xl-10 px-0 px-xl-3">
                                     <div class="progress progress-lg mb-0">
                                         <div class="progress-bar bg-primary" role="progressbar" aria-valuenow={{workflow.progress}} aria-valuemin="0" aria-valuemax="100" style="width: {{workflow.progress}}%;"></div>
                                     </div>
@@ -130,7 +132,7 @@
                         {% else %}
                           <td class="border-0 font-weight-normal">{{workflow.end_date}}</td>
                         {% endif %}
-                        <td class="border-0 font-weight-bold">{{workflow.username}}</td>
+                        <td class="border-0 font-weight-bold">{{workflow.user.username}}</td>
                       </tr>
                       {% endfor %}
                     {% endif %}
