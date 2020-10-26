@@ -1,1 +1,1 @@
-system_map = {"Compute Canada": ["cedar", "gra"]}
+system_map = {"Compute Canada": ["cedar", "gra"], "Infoserv": ["info"]}

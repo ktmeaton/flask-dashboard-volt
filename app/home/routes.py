@@ -13,11 +13,28 @@ from app.home.forms import WorkflowForm
 from app import db  # Database
 from app.home.models import Workflow  # Database model
 
+# from app.base.models import User
+from app.home.dashboard_data import DashboardData
+
+import locale
+
+locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+
 
 @blueprint.route("/index")
 @login_required
 def index():
-    return render_template("index.html", segment="index")
+    dash_data = DashboardData(current_user)
+    return render_template(
+        "index.html",
+        segment="index",
+        last_month_jobs=locale.format("%d", dash_data.last_month_jobs, grouping=True),
+        tracked_jobs_fmt=dash_data.tracked_jobs_fmt,
+        workflow_date_range=dash_data.workflow_date_range,
+        month_delta=dash_data.month_delta,
+        system_share_values=list(dash_data.system_share.values()),
+        system_share_keys=list(dash_data.system_share.keys()),
+    )
 
 
 @blueprint.route("/<template>")
@@ -123,6 +140,6 @@ def database():
 @blueprint.route("/workflows", methods=["GET", "POST"])
 @login_required
 def workflows():
-    data = Workflow.query.filter(Workflow.user == current_user).all()
+    data = current_user.workflows.all()
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)
