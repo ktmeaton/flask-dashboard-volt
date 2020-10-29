@@ -100,6 +100,7 @@ def login():
 @blueprint.route("/register", methods=["GET", "POST"])
 def register():
     create_account_form = CreateAccountForm(request.form)
+    print(create_account_form)
     # -------------------------------------------------------------------------#
     # POST Request - Valid
     if create_account_form.validate_on_submit():

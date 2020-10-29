@@ -1,61 +1,96 @@
+"""
+API Routes
+https://github.com/miguelgrinberg/microblog/blob/master/app/api/
+"""
+
+# General
+from flask import jsonify
 from app.api import blueprint
+from app.base.models import User
 from app import db
-from flask_restful import Resource, Api, reqparse
 
-# from flask_login import login_required, current_user
+# Authentication
+from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 
-# from flask_jwt_extended import (create_access_token, get_jwt_identity, jwt_required)
-# from app.base.models import User
-from app.home.models import Workflow
+# Errors
+from werkzeug.http import HTTP_STATUS_CODES
 
-api = Api(blueprint)
+# Setup
+basic_auth = HTTPBasicAuth()
+token_auth = HTTPTokenAuth()
 
-
-class WorkflowListAPI(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument(
-            "system",
-            type=str,
-            required=True,
-            help="No system provided",
-            location="json",
-        )
-        self.reqparse.add_argument("node1", type=str, location="json")
-        super(WorkflowListAPI, self).__init__()
-
-    def get(self):
-        # Retrieve workflows from the database
-        workflows = (
-            db.session.query(Workflow)
-            # .filter(Workflow.username == str(current_user))
-            .all()
-        )
-        # Convert to dictionary format for json
-        for i in range(0, len(workflows)):
-            workflows[i] = workflows[i].as_dict()
-        return workflows
-
-    def post(self):
-        pass
+# -----------------------------------------------------------------------------#
+# Authentication
+# -----------------------------------------------------------------------------#
 
 
-class WorkflowAPI(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument(
-            "system", type=str, location="json", help="No system provided"
-        )
-        super(WorkflowAPI, self).__init__()
-
-    def get(self, id):
-        workflow = db.session.query(Workflow).filter(Workflow.id == id).first()
-        if workflow:
-            workflow = workflow.as_dict()
-            return workflow, 200
-        else:
-            return 404
+@basic_auth.verify_password
+def verify_password(username, password):
+    user = User.query.filter_by(username=username).first()
+    if user and user.check_password(password):
+        return user
 
 
-api.add_resource(WorkflowListAPI, "/api/v0.1.0/workflows", endpoint="workflows")
-api.add_resource(WorkflowAPI, "/api/v0.1.0/workflows/<int:id>", endpoint="workflow")
+@basic_auth.error_handler
+def basic_auth_error(status):
+    return error_response(status)
+
+
+@token_auth.verify_token
+def verify_token(token):
+    return User.check_token(token) if token else None
+
+
+@token_auth.error_handler
+def token_auth_error(status):
+    return error_response(status)
+
+
+# -----------------------------------------------------------------------------#
+# Errors
+# -----------------------------------------------------------------------------#
+
+
+def error_response(status_code, message=None):
+    payload = {"error": HTTP_STATUS_CODES.get(status_code, "Unknown error")}
+    if message:
+        payload["message"] = message
+    response = jsonify(payload)
+    response.status_code = status_code
+    return response
+
+
+def bad_request(message):
+    return error_response(400, message)
+
+
+# -----------------------------------------------------------------------------#
+# Tokens
+# -----------------------------------------------------------------------------#
+
+
+@blueprint.route("/tokens", methods=["POST"])
+@basic_auth.login_required
+def get_token():
+    token = basic_auth.current_user().get_token()
+    db.session.commit()
+    return jsonify({"token": token})
+
+
+@blueprint.route("/tokens", methods=["DELETE"])
+@token_auth.login_required
+def revoke_token():
+    token_auth.current_user().revoke_token()
+    db.session.commit()
+    return "", 204
+
+
+# -----------------------------------------------------------------------------#
+# Users
+# -----------------------------------------------------------------------------#
+
+
+@blueprint.route("/users/<int:id>", methods=["GET"])
+@token_auth.login_required
+def get_user(id):
+    return jsonify(User.query.get_or_404(id).to_dict())

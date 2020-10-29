@@ -33,28 +33,32 @@
                                 </p>
                             </div>
 
+                            <!-- Form -->
                             <form method="post" action="" class="mt-4">
 
                                 {{ form.hidden_tag() }}
 
-                                <!-- Form -->
+                                <!-- Item-->
                                 <div class="form-group mb-4">
-                                    {{ form.username.label }}
+                                    <label for="login_form_username">{{form.username.label}}</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="username" name="login_form_username"><span class="fas fa-user-circle"></span></span>
-                                        {{ form.username(size=64, placeholder="Username", class="form-control") }}
+                                        {{ form.username(size=64, placeholder="Username", class="form-control", value="test") }}
                                     </div>
                                 </div>
-                                <!-- End of Form -->
-                                <div class="form-group">
+
+                                <!-- Item-->
+                                <div class="form-group mb-4">
                                     <!-- Form -->
-                                    <div class="form-group mb-4">
-                                        {{ form.password.label }}
-                                        <div class="input-group">
-                                            <span class="input-group-text" id="password" name="login_form_password"><span class="fas fa-unlock-alt"></span></span>
-                                            {{ form.password(size=64, placeholder="Password", class="form-control", type="password") }}
-                                        </div>
+                                    <label for="login_form_password">{{form.password.label}}</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="password" name="login_form_password"><span class="fas fa-unlock-alt"></span></span>
+                                        {{ form.password(size=64, placeholder="Password", class="form-control", type="password", value="pass") }}
                                     </div>
+                                </div>
+
+                                <!-- Item-->
+                                <div class="form-group mb-4">
                                     <div class="d-flex justify-content-between align-items-center mb-4">
                                       <div>
                                         {{ form.remember_me }} {{ form.remember_me.label }}
@@ -65,8 +69,8 @@
                                     </div>
                                 </div>
                                 <button type="submit" name="login" class="btn btn-block btn-primary">Login In</button>
-                                <!-- End of Form -->
                             </form>
+                            <!-- End of Form -->
 
                             <div class="d-flex justify-content-center align-items-center mt-4">
                                 <span class="font-weight-normal">

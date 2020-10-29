@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
+# from flask import url_for
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.orm import relationship
@@ -24,7 +25,6 @@ class User(db.Model, UserMixin):
     password_hash = Column(String(128))
     remember_me = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
-    avatar = Column(String(128))
     registered_on = Column(
         DateTime, unique=False, index=True, default=datetime.datetime.utcnow
     )
@@ -57,12 +57,25 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def set_avatar(self, size=128):
+    def avatar(self, size):
         digest = md5(self.email.lower().encode("utf-8")).hexdigest()
-        avatar_url = "https://www.gravatar.com/avatar/{}?d=identicon&s={}".format(
+        return "https://www.gravatar.com/avatar/{}?d=identicon&s={}".format(
             digest, size
         )
-        self.avatar = avatar_url
+
+    def to_dict(self, include_email=False):
+        data = {
+            "id": self.id,
+            "username": self.username,
+            "registered_on": self.registered_on,
+            "_links": {
+                # 'self': url_for('blueprint_api.get_user', id=self.id),
+                "avatar": self.avatar(128)
+            },
+        }
+        if include_email:
+            data["email"] = self.email
+        return data
 
 
 @login_manager.user_loader
