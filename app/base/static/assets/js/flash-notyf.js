@@ -16,7 +16,8 @@ document.addEventListener("DOMContentLoaded", function(){
                   tagName: 'span',
                   color: '#fff'
               },
-              dismissible: true
+              dismissible: true,
+              duration: 5000
           },
           {
               type: 'error',
@@ -26,7 +27,8 @@ document.addEventListener("DOMContentLoaded", function(){
                   tagName: 'span',
                   color: '#fff'
               },
-              dismissible: true
+              dismissible: true,
+              duration: 5000
           },
           {
               type: 'warning',
@@ -36,7 +38,8 @@ document.addEventListener("DOMContentLoaded", function(){
                   tagName: 'span',
                   color: '#fff'
               },
-              dismissible: true
+              dismissible: true,
+              duration: 5000
           },
           {
               type: 'success',
@@ -46,7 +49,8 @@ document.addEventListener("DOMContentLoaded", function(){
                   tagName: 'span',
                   color: '#fff'
               },
-              dismissible: true
+              dismissible: true,
+              duration: 5000
           }
       ]
   });

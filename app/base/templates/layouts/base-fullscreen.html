@@ -70,7 +70,8 @@
 </head>
 <body class="{% block body_class %}{% endblock body_class %}">
 
-    {% block content %}{% endblock content %}
+    {% block content %}
+    {% endblock content %}
 
     {% include 'includes/scripts.html' %}
 
@@ -82,6 +83,13 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
+
+    <!-- Form Notyf -->
+    {% if form %}
+      {% for item in form.errors.items() %}
+        <script src="/static/assets/js/flash-notyf.js" message="{{item[1][0]}}" category="info"></script>
+      {% endfor %}
+    {% endif %}
 
     <!-- Specific Page JS goes HERE  -->
     {% block javascripts %}

@@ -34,7 +34,7 @@
                             </div>
 
                             <!-- Form -->
-                            <form method="post" action="" class="mt-4">
+                            <form method="post" action="" class="mt-4 needs-validation" novalidate>
 
                                 {{ form.hidden_tag() }}
 
@@ -53,7 +53,7 @@
                                     <label for="login_form_password">{{form.password.label}}</label>
                                     <div class="input-group">
                                         <span class="input-group-text" id="password" name="login_form_password"><span class="fas fa-unlock-alt"></span></span>
-                                        {{ form.password(size=64, placeholder="Password", class="form-control", type="password", value="pass") }}
+                                        {{ form.password(size=64, placeholder="Password", class="form-control", type="password") }}
                                     </div>
                                 </div>
 

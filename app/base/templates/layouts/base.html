@@ -64,6 +64,9 @@
 <!-- Volt CSS -->
 <link type="text/css" href="/static/assets/css/volt.css" rel="stylesheet">
 
+<!-- Bootstrap
+<link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" >
+-->
     <!-- Specific Page CSS goes HERE  -->
     {% block stylesheets %}{% endblock stylesheets %}
 
@@ -103,6 +106,14 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
+
+    <!-- Form Notyf -->
+
+    {% if form %}
+      {% for item in form.errors.items() %}
+        <script src="/static/assets/js/flash-notyf.js" message="{{item[1][0]}}" category="info"></script>
+      {% endfor %}
+    {% endif %}
 
     <!-- Specific Page JS goes HERE  -->
     {% block javascripts %}

@@ -11,8 +11,12 @@ from app.base.models import User
 
 
 class LoginForm(FlaskForm):
-    username = TextField("Username", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired()])
+    username = TextField(
+        "Username", validators=[DataRequired(message="Please enter a username.")]
+    )
+    password = PasswordField(
+        "Password", validators=[DataRequired(message="Please enter a password.")]
+    )
     remember_me = BooleanField("Remember Me")
 
 
@@ -27,13 +31,14 @@ class CreateAccountForm(FlaskForm):
     password2 = PasswordField(
         "Repeat Password",
         validators=[
-            DataRequired(),
+            DataRequired(message="Please enter your password twice."),
             EqualTo("password", message="Passwords do not match."),
         ],
         widget=PasswordInput(hide_value=True),
     )
     agree_terms = BooleanField(
-        "Agree Terms", validators=[DataRequired(message="This field is required.")]
+        "Agree Terms",
+        validators=[DataRequired(message="Please agree to the terms of service.")],
     )
 
     def validate_username(self, username):

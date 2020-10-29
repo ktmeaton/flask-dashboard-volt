@@ -68,16 +68,50 @@
         <div class="d-flex col-3">
             {% import "bootstrap/wtf.html" as wtf %}
 
-            <form action="" method="post" class="form" role="form">
+            <form action="" method="post" class="form needs-validation" role="form" novalidate>
 
               {{ form.hidden_tag() }}
-
-              {{ wtf.form_field(form.node, class='form-control', type='text', placeholder='Node', default="cedar1") }}
-              {{ wtf.form_field(form.total_jobs, class='form-control', type='number', placeholder='Total Jobs', default=10) }}
-              {{ wtf.form_field(form.completed_jobs, class='form-control', type='number', placeholder='Completed Jobs', default=5) }}
-              {{ wtf.form_field(form.running_jobs, class='form-control', type='number', placeholder='Running Jobs', default=2) }}
-              {{ wtf.form_field(form.failed_jobs, class='form-control', type='number', placeholder='Failed Jobs', default=0) }}
-             <input type=submit class='btn btn-info btn-block mt-3'>
+              <!-- Item -->
+              <div class="form-group mb-4">
+                  <label for="workflow_form_node">{{form.node.label}}</label>
+                  <div class="input-group">
+                      <span class="input-group-text" id="workflow_form_node" name="node"></span>
+                      {{ form.node(placeholder="Node", class="form-control", value="cedar1") }}
+                  </div>
+              </div>
+              <!-- Item -->
+              <div class="form-group mb-4">
+                  <label for="workflow_form_total_jobs">{{form.total_jobs.label}}</label>
+                  <div class="input-group">
+                      <span class="input-group-text" id="workflow_form_total_jobs" name="total_jobs"></span>
+                        {{ form.total_jobs(class='form-control', type='number', placeholder='Total Jobs', value=10) }}
+                  </div>
+              </div>
+              <!-- Item -->
+              <div class="form-group mb-4">
+                  <label for="workflow_form_completed_jobs">{{form.completed_jobs.label}}</label>
+                  <div class="input-group">
+                      <span class="input-group-text" id="workflow_form_completed_jobs" name="completed_jobs"></span>
+                        {{ form.completed_jobs(class='form-control', type='number', placeholder='Completed Jobs', value=0) }}
+                  </div>
+              </div>
+              <!-- Item -->
+              <div class="form-group mb-4">
+                  <label for="workflow_form_running_jobs">{{form.running_jobs.label}}</label>
+                  <div class="input-group">
+                      <span class="input-group-text" id="workflow_form_running_jobs" name="running_jobs"></span>
+                        {{ form.running_jobs(class='form-control', type='number', placeholder='Running Jobs', value=0) }}
+                  </div>
+              </div>
+              <!-- Item -->
+              <div class="form-group mb-4">
+                  <label for="workflow_form_failed_jobs">{{form.failed_jobs.label}}</label>
+                  <div class="input-group">
+                      <span class="input-group-text" id="workflow_failed_jobs" name="failed_jobs"></span>
+                        {{ form.failed_jobs(class='form-control', type='number', placeholder='Failed Jobs', value=0) }}
+                  </div>
+              </div>
+              <input type=submit class='btn btn-info btn-block mt-3'>
             </form>
         </div>
         {% include 'includes/footer.html' %}

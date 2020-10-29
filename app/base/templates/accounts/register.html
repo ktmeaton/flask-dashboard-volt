@@ -44,9 +44,6 @@
                                         <span class="input-group-text" id="register_form_username" name="username"><span class="fas fa-user-shield"></span></span>
                                         {{ form.username(placeholder="Username", class="form-control") }}
                                     </div>
-                                    {% for error in form.username.errors %}
-                                      <span style="color: red;">{{error}}</span>
-                                    {% endfor %}
                                 </div>
 
                                 <!-- Item -->
@@ -56,9 +53,6 @@
                                         <span class="input-group-text" id="register_form_email" name="email"><span class="fas fa-envelope"></span></span>
                                         {{ form.email(placeholder="Email", class="input form-control", type="email") }}
                                     </div>
-                                    {% for error in form.email.errors %}
-                                      <span style="color: red;">{{error}}</span>
-                                    {% endfor %}
                                 </div>
 
                                 <!-- Item -->
@@ -68,9 +62,6 @@
                                         <span class="input-group-text" id="register_form_password" name="password"><span class="fas fa-unlock-alt"></span></span>
                                         {{ form.password(placeholder="Password", class="form-control", type="password") }}
                                     </div>
-                                    {% for error in form.password.errors %}
-                                    <span style="color: red;">[{{error}}]</span>
-                                    {% endfor %}
                                 </div>
 
                                 <!-- Item -->
@@ -80,17 +71,11 @@
                                         <span class="input-group-text" id="register_form_password2" name="password2"><span class="fas fa-unlock-alt"></span></span>
                                         {{ form.password2(placeholder="Password", class="form-control", type="password") }}
                                     </div>
-                                    {% for error in form.password2.errors %}
-                                    <span style="color: red;">{{error}}</span>
-                                    {% endfor %}
                                 </div>
 
                                 <!-- Item -->
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <a href="{{ url_for('base_blueprint.terms') }} " >{{ form.agree_terms }} {{ form.agree_terms.label }}</a>
-                                    {% for error in form.agree_terms.errors %}
-                                    <span style="color: red;">{{error}}</span>
-                                    {% endfor %}
                                     <div class="form-check">
                                         <a href="{{ url_for('base_blueprint.login') }}" class="small text-right">Login</a>
                                     </div>
