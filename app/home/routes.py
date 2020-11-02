@@ -25,6 +25,7 @@ locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 @login_required
 def index():
     dash_data = DashboardData(current_user)
+    print(dash_data.monthly_jobs)
     return render_template(
         "index.html",
         segment="index",
@@ -32,8 +33,8 @@ def index():
         tracked_jobs_fmt=dash_data.tracked_jobs_fmt,
         workflow_date_range=dash_data.workflow_date_range,
         month_delta=dash_data.month_delta,
-        system_share_values=list(dash_data.system_share.values()),
-        system_share_keys=list(dash_data.system_share.keys()),
+        system_share=dash_data.system_share,
+        daily_jobs=dash_data.daily_jobs,
     )
 
 
@@ -140,7 +141,6 @@ def database():
 @blueprint.route("/workflows", methods=["GET", "POST"])
 @login_required
 def workflows():
-    print(current_user.to_dict())
     data = current_user.workflows.all()
     data.reverse()
     return render_template("workflow-view.html", workflow_data=data)

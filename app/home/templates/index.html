@@ -45,7 +45,7 @@
                             <h2 class="h3">{{last_month_jobs}}</h2>
                             <div class="small mt-2">
                                 <span class="font-weight-bold mr-2">This Month</span>
-                                {% if month_delta == "Inf" or month_delta >= 100 %}
+                                {% if month_delta == "Inf" or month_delta | int >= 100 %}
                                   <span class="fas fa-angle-up text-success"></span>
                                   <span class="text-success font-weight-bold">{{ month_delta }}%  </span>
                                 {% else %}
@@ -60,7 +60,7 @@
                         </div>
                     </div>
                     <div class="card-body p-2">
-                        <div class="ct-chart-sales-value ct-double-octave ct-series-a"></div>
+                        <div class="ct-chart-jobs-daily ct-double-octave ct-series-a"></div>
                     </div>
                 </div>
             </div>
@@ -87,12 +87,14 @@
                     <div class="card-body">
                         <div class="row d-block d-xl-flex align-items-center">
                             <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                <div class="ct-chart-system-share ct-series-a"></div>
+                                <div class="ct-chart-system-share ct-series-a">
+                                </div>
+
                             </div>
                             <div class="col-12 col-xl-7 px-xl-0">
                                 <h2 class="h5 mb-3">System Share</h2>
-                                {% for system in system_share_keys %}
-                                  <h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-secondary mr-1"><span class="fas fa-desktop"></span></span> {{ system }} <a href="#" class="h6">50%</a></h6>
+                                {% for system,percent in system_share.items() %}
+				<h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-secondary mr-1"><span class="fas fa-desktop"></span></span> {{ system }} <a href="#" class="h6">{{percent}}%</a></h6>
                                 {% endfor %}
                             </div>
                         </div>
@@ -109,13 +111,15 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+
 <script>
+
   document.addEventListener("DOMContentLoaded", function(event) {
+    var system_share = {{system_share | tojson}}
 
     if(document.querySelector('.ct-chart-system-share')) {
         var data = {
-            labels: ["test1", "test2"],
-            series: {{system_share_values | tojson}}
+            series: Object.values(system_share)
           };
 
           var sum = function(a, b) { return a + b };
@@ -137,7 +141,37 @@
         });
     }
 
-  });
+  if(d.querySelector('.ct-chart-jobs-daily')) {
+        var daily_jobs = {{daily_jobs | tojson}};
+
+        new Chartist.Line('.ct-chart-jobs-daily', {
+          labels: Object.keys(daily_jobs),
+          series: [
+               Object.values(daily_jobs)
+          ]
+        }, {
+          low: 0,
+          showArea: true,
+          fullWidth: true,
+          plugins: [
+            Chartist.plugins.tooltip()
+          ],
+          axisX: {
+              // On the x-axis start means top and end means bottom
+              position: 'end',
+              showGrid: true
+          },
+          axisY: {
+              // On the y-axis start means left and end means right
+              showGrid: false,
+              showLabel: false,
+              labelInterpolationFnc: function(value) {
+                  return '$' + (value / 1) + 'k';
+              }
+          }
+      });
+  }
+});
 </script>
 
 {% endblock javascripts %}

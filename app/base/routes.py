@@ -4,7 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from flask import render_template, redirect, request, url_for, flash
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_user, logout_user  # , login_required
 from app import db  # , login_manager
 from app.base import blueprint
 from app.base.forms import LoginForm, CreateAccountForm
@@ -159,6 +159,8 @@ def register():
 
 # -----------------------------------------------------------------------------#
 # Account Confirmation
+
+
 @blueprint.route("/confirm/<token>")
 # @login_required
 def confirm_email(token):
@@ -179,6 +181,12 @@ def confirm_email(token):
         flash("You have confirmed your account. Thanks!", "success")
     return redirect(url_for("base_blueprint.login"))
 
+
+# @blueprint.route("/user/<username>")
+# @login_required
+# def user(username):
+#    user = User.query.filter_by(username=username).first_or_404()
+#    return render_template("user.html")
 
 # -----------------------------------------------------------------------------#
 # Logout
