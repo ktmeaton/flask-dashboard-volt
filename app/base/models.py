@@ -46,8 +46,6 @@ class User(db.Model, UserMixin):
 
             setattr(self, property, value)
 
-        self.set_avatar()
-
     def __repr__(self):
         return "<User {}>".format(self.username)
 
