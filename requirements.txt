@@ -13,3 +13,4 @@ flask-mail==0.9.1
 psycopg2==2.8.6
 flask-jwt-extended==3.24.1
 flask-restful==0.3.8
+Flask-HTTPAuth==4.1.0
