@@ -97,15 +97,17 @@ class DashboardData:
                 month=prev.month - 1 if prev.month > 1 else 12,
                 year=prev.year if prev.month > 1 else prev.year - 1,
             )
-        self.monthly_jobs = {k.strftime("%b"): v for k, v in self.monthly_jobs.items()}
+        self.monthly_jobs = {
+            k.strftime("%b %Y"): v for k, v in self.monthly_jobs.items()
+        }
 
     def get_monthly_delta(self):
         cur_month = datetime.datetime.utcnow()
-        cur_month_str = cur_month.strftime("%b")
+        cur_month_str = cur_month.strftime("%b %Y")
         prev_month = cur_month.replace(
             month=cur_month.month - 1 if cur_month.month > 1 else 12
         )
-        prev_month_str = prev_month.strftime("%b")
+        prev_month_str = prev_month.strftime("%b %Y")
         self.last_month_jobs = self.monthly_jobs[prev_month_str]
         try:
             self.month_delta = math.ceil(

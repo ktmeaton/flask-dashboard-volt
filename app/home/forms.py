@@ -29,3 +29,7 @@ class WorkflowForm(FlaskForm):
         "Failed Jobs",
         validators=[InputRequired(message="Please enter the failed jobs.")],
     )
+
+
+class WorkflowChartForm(FlaskForm):
+    time = StringField("Time", validators=[DataRequired()])

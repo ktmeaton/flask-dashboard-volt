@@ -9,7 +9,7 @@ from flask_login import login_required, current_user
 
 from jinja2 import TemplateNotFound
 
-from app.home.forms import WorkflowForm
+from app.home.forms import WorkflowForm, WorkflowChartForm
 from app import db  # Database
 from app.home.models import Workflow  # Database model
 
@@ -21,20 +21,29 @@ import locale
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
 
-@blueprint.route("/index")
+@blueprint.route("/index", methods=["GET", "POST"])
 @login_required
 def index():
     dash_data = DashboardData(current_user)
-    print(dash_data.monthly_jobs)
+    dash_chart_form = WorkflowChartForm(request.form)
+    # Set default chart view to week
+    workflow_time_chart = "Week"
+    if dash_chart_form.validate_on_submit():
+        workflow_time_chart = dash_chart_form.time.data
+
     return render_template(
         "index.html",
         segment="index",
+        user=current_user,
+        form=dash_chart_form,
+        workflow_time_chart=workflow_time_chart,
         last_month_jobs=locale.format("%d", dash_data.last_month_jobs, grouping=True),
         tracked_jobs_fmt=dash_data.tracked_jobs_fmt,
         workflow_date_range=dash_data.workflow_date_range,
         month_delta=dash_data.month_delta,
         system_share=dash_data.system_share,
         daily_jobs=dash_data.daily_jobs,
+        monthly_jobs=dash_data.monthly_jobs,
     )
 
 
@@ -135,7 +144,9 @@ def database():
         return redirect(url_for("home_blueprint.workflows"))
 
     else:
-        return render_template("database-enter.html", form=workflow_form)
+        return render_template(
+            "database-enter.html", user=current_user, form=workflow_form
+        )
 
 
 @blueprint.route("/workflows", methods=["GET", "POST"])
@@ -143,4 +154,10 @@ def database():
 def workflows():
     data = current_user.workflows.all()
     data.reverse()
-    return render_template("workflow-view.html", workflow_data=data)
+    return render_template("workflow-view.html", user=current_user, workflow_data=data)
+
+
+@blueprint.route("/profile/<username>")
+@login_required
+def profile(username):
+    return render_template("profile.html", user=current_user)

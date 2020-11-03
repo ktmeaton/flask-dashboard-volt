@@ -54,13 +54,20 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="d-flex ml-auto">
-                            <a href="#" class="btn btn-secondary text-dark btn-sm mr-2">Month</a>
-                            <a href="#" class="btn btn-primary btn-sm mr-3">Week</a>
-                        </div>
+                          <div class="d-flex ml-auto">
+                            <form action="" method="post" role="form">
+                              {{ form.hidden_tag() }}
+                              <input type="submit" class="btn btn-secondary text-dark btn-sm mr-2" id="button-graph-week" name="time" value="Week">
+                              <input type="submit" class="btn btn-primary btn-sm mr-3" id="button-graph-month" name="time" value="Month">
+                            </form>
+                          </div>
                     </div>
                     <div class="card-body p-2">
-                        <div class="ct-chart-jobs-daily ct-double-octave ct-series-a"></div>
+                        {% if workflow_time_chart == "Week" %}
+                          <div class="ct-chart-jobs-week ct-double-octave ct-series-a"></div>
+                        {% elif workflow_time_chart == "Month" %}
+                          <div class="ct-chart-jobs-month ct-double-octave ct-series-a"></div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -115,9 +122,9 @@
 <script>
 
   document.addEventListener("DOMContentLoaded", function(event) {
-    var system_share = {{system_share | tojson}}
 
     if(document.querySelector('.ct-chart-system-share')) {
+        var system_share = {{system_share | tojson}}
         var data = {
             series: Object.values(system_share)
           };
@@ -141,36 +148,118 @@
         });
     }
 
-  if(d.querySelector('.ct-chart-jobs-daily')) {
-        var daily_jobs = {{daily_jobs | tojson}};
+  if(d.querySelector('.ct-chart-jobs-week')) {
+        // Dates objects are initially unordered
+        const daily_jobs_unordered = {{daily_jobs | tojson}};
+        const daily_jobs = {}
 
-        new Chartist.Line('.ct-chart-jobs-daily', {
-          labels: Object.keys(daily_jobs),
-          series: [
-               Object.values(daily_jobs)
-          ]
-        }, {
-          low: 0,
-          showArea: true,
-          fullWidth: true,
-          plugins: [
-            Chartist.plugins.tooltip()
-          ],
-          axisX: {
-              // On the x-axis start means top and end means bottom
-              position: 'end',
-              showGrid: true
+        // Sort the date keys in ascending order
+        Object.keys(daily_jobs_unordered).sort(function(a, b) {
+          return Date.parse(a)
+               - Date.parse(b);
+          }).forEach(function(key) {
+            daily_jobs[key] = daily_jobs_unordered[key];
+          })
+
+        new Chartist.Line('.ct-chart-jobs-week',
+          {
+            labels: Object.keys(daily_jobs),
+            series: [
+                 Object.values(daily_jobs)
+            ]
           },
-          axisY: {
-              // On the y-axis start means left and end means right
-              showGrid: false,
-              showLabel: false,
-              labelInterpolationFnc: function(value) {
-                  return '$' + (value / 1) + 'k';
-              }
+          {
+            low: 0,
+            showArea: true,
+            fullWidth: true,
+            chartPadding: 50,
+            plugins: [
+              Chartist.plugins.tooltip(),
+              Chartist.plugins.ctAxisTitle({
+                axisX: {
+                  axisTitle: 'Date',
+                  axisClass: 'ct-axis-title',
+                  offset: {
+                    x: 0,
+                    y: 50
+                  },
+                  textAnchor: 'middle'
+                },
+                axisY: {
+                  axisTitle: 'Jobs',
+                  offset: {
+                    x: 0,
+                    y: 25
+                  },
+                  textAnchor: 'middle',
+                  flipTitle: true
+                }
+              })
+            ]
           }
-      });
+        );
   }
+
+  if(d.querySelector('.ct-chart-jobs-month')) {
+        // Dates objects are initially unordered
+        const daily_jobs_unordered = {{monthly_jobs | tojson}};
+        const daily_jobs = {}
+        const num_months = 6
+
+        // Sort the date keys in ascending order
+        Object.keys(daily_jobs_unordered).sort(function(a, b) {
+          console.log(Date.parse(a));
+          count = 0;
+          return Date.parse(a)
+               - Date.parse(b);
+          }).forEach(function(key) {
+            // Only use the last 6 months
+            if (count >= (12 - num_months)){
+              daily_jobs[key] = daily_jobs_unordered[key];
+            }
+            count = count + 1;
+          })
+
+        new Chartist.Line('.ct-chart-jobs-month',
+          {
+            labels: Object.keys(daily_jobs),
+            series: [
+                 Object.values(daily_jobs)
+            ]
+          },
+          {
+            low: 0,
+            showArea: true,
+            fullWidth: true,
+            chartPadding: 50,
+            plugins: [
+              Chartist.plugins.tooltip(),
+              Chartist.plugins.ctAxisTitle({
+                axisX: {
+                  axisTitle: 'Date',
+                  axisClass: 'ct-axis-title',
+                  offset: {
+                    x: 0,
+                    y: 50
+                  },
+                  textAnchor: 'middle'
+                },
+                axisY: {
+                  axisTitle: 'Jobs',
+                  offset: {
+                    x: 0,
+                    y: 25
+                  },
+                  textAnchor: 'middle',
+                  flipTitle: true
+                }
+              })
+            ]
+          }
+        );
+  }
+
+
 });
 </script>
 
