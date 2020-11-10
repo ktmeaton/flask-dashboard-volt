@@ -13,9 +13,19 @@ from app.base.token import generate_confirmation_token, confirm_token
 from app.base.email import send_email
 from werkzeug.urls import url_parse
 
-# import datetime  # confirmed_on
+import datetime  # last_seen
 
 from smtplib import SMTPAuthenticationError
+
+# -----------------------------------------------------------------------------#
+# Universal
+# -----------------------------------------------------------------------------#
+@blueprint.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.datetime.utcnow()
+        db.session.commit()
+
 
 # -----------------------------------------------------------------------------#
 # Account

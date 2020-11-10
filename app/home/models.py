@@ -66,22 +66,25 @@ class Workflow(db.Model):
             self.end_date = None
 
     def __repr__(self):
-        return "<System {}; Node {}; Total Jobs {}>".format(
-            self.system, self.node, self.total_jobs
-        )
+        return str(self.to_dict())
 
-    def as_dict(self):
-        workflow_dict = {}
-        workflow_dict[self.id] = {}
-        for attr in vars(self):
-            if attr == "_sa_instance_state":
-                continue
-            val = getattr(self, attr)
-            if isinstance(val, datetime.date):
-                workflow_dict[self.id][attr] = val.strftime("%Y-%m-%d")
-            else:
-                workflow_dict[self.id][attr] = getattr(self, attr)
-        return workflow_dict
+    def to_dict(self):
+        data = {
+            "id": self.id,
+            "system": self.system,
+            "node": self.node,
+            "status": self.status,
+            "progress": self.progress,
+            "total_jobs": self.total_jobs,
+            "completed_jobs": self.completed_jobs,
+            "running_jobs": self.running_jobs,
+            "failed_jobs": self.failed_jobs,
+            "start_date": self.start_date.strftime("%Y-%m-%d %H:%M:%S"),
+            "end_date": self.end_date.strftime("%Y-%m-%d %H:%M:%S")
+            if self.end_date
+            else self.end_date,
+        }
+        return data
 
     def end(self):
         self.end_date = datetime.datetime.utcnow
