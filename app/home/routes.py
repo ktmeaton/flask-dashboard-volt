@@ -152,8 +152,8 @@ def database():
 @blueprint.route("/workflows", methods=["GET", "POST"])
 @login_required
 def workflows():
-    data = current_user.workflows.all()
-    data.reverse()
+    data = current_user.workflows.order_by(Workflow.id.desc()).all()
+    # data.reverse()
     return render_template("workflow-view.html", user=current_user, workflow_data=data)
 
 
