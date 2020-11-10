@@ -54,6 +54,7 @@ class Workflow(db.Model):
                 if node in self.node:
                     self.system = system
 
+        self.start_date = datetime.datetime.utcnow()
         self.progress = int(int(self.completed_jobs) / int(self.total_jobs) * 100)
         self.status = (
             "Failed"

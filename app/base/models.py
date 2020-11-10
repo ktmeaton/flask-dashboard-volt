@@ -78,7 +78,7 @@ class User(db.Model, UserMixin):
             data["email"] = self.email
         return data
 
-    def get_token(self, expires_in=3600):
+    def get_token(self, expires_in=86400):
         now = datetime.datetime.utcnow()
         if self.token and self.token_expiration > now + datetime.timedelta(seconds=60):
             return self.token

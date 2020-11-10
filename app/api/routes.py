@@ -169,10 +169,10 @@ class WorkflowByAttrAPI(Resource):
 
     def get(self):
         """
-       GET a workflow by attribute(s).
-       curl -H "Authorization: Bearer $TOKEN"
-         http://localhost:5000/api/workflows/attr?node=cedar5&total_jobs=50
-       """
+        GET a workflow by attribute(s).
+        curl -H "Authorization: Bearer $TOKEN"
+          http://localhost:5000/api/workflows/attr?node=cedar5&total_jobs=50
+        """
         user = token_auth.current_user()
         self.reqargs = self.reqparse.parse_args()
         filter_attr = {attr: val for attr, val in self.reqargs.items() if val}
@@ -186,16 +186,70 @@ class WorkflowByAttrAPI(Resource):
         workflow_dict = {workflow.id: workflow.to_dict() for workflow in check_workflow}
         return {"workflows": workflow_dict}, 200
 
+    def post(self):
+        """
+        POST a new workflow into the database.
+        """
+        user = token_auth.current_user()
+        self.reqparse.add_argument(
+            "node", type=str, required=True, help="No workflow node provided."
+        )
+        self.reqparse.add_argument(
+            "total_jobs",
+            type=int,
+            required=True,
+            help="No workflow total_jobs provided.",
+        )
+        self.reqparse.add_argument(
+            "completed_jobs",
+            type=int,
+            required=True,
+            help="No workflow completed_jobs provided.",
+        )
+        self.reqparse.add_argument(
+            "running_jobs",
+            type=int,
+            required=True,
+            help="No workflow running_jobs provided.",
+        )
+        self.reqparse.add_argument(
+            "failed_jobs",
+            type=int,
+            required=True,
+            help="No workflow failed_jobs provided.",
+        )
+        self.reqargs = self.reqparse.parse_args()
+
+        # Check if the workflow exists or if hasn't completed
+        check_workflow = (
+            Workflow.query.filter(Workflow.node == self.reqargs["node"])
+            .filter(Workflow.total_jobs == self.reqargs["total_jobs"])
+            .filter(Workflow.user == user)
+            .filter(Workflow.status != "Completed")
+            .filter(Workflow.status != "Failed")
+            .all()
+        )
+
+        # If an existing workflow was found, can't post
+        if len(check_workflow) > 0:
+            return {"message": "Existing workflow found."}, 400
+
+        # Create a new workflow to take advantage of model logic
+        Workflow(
+            user=user,
+            node=self.reqargs["node"],
+            total_jobs=self.reqargs["total_jobs"],
+            completed_jobs=self.reqargs["completed_jobs"],
+            running_jobs=self.reqargs["running_jobs"],
+            failed_jobs=self.reqargs["failed_jobs"],
+        )
+        # Commit new workflow
+        db.session.commit()
+        return {"message": "Workflow successfully added."}, 200
+
     def put(self):
         """
         PUT new workflow attributes into an existing workflow.
-        curl -H "Authorization: Bearer $TOKEN"
-          http://localhost:5000/api/workflows/attr?
-          node=cedar5&
-          total_jobs=50&
-          completed_jobs=40&
-          running_jobs=10&
-          failed_jobs=0
         """
         user = token_auth.current_user()
         self.reqparse.add_argument(
@@ -232,19 +286,18 @@ class WorkflowByAttrAPI(Resource):
             Workflow.query.filter(Workflow.node == self.reqargs["node"])
             .filter(Workflow.total_jobs == self.reqargs["total_jobs"])
             .filter(Workflow.user == user)
-            .all()
+            .filter(Workflow.status == "Running")
+            .order_by(Workflow.id.desc())
+            .first()
         )
         # If not just one workflow found, return 400
-        if len(check_workflow) != 1:
-            return 400
-
-        check_workflow = check_workflow[0]
+        if not check_workflow:
+            return {"message": "No workflow found."}, 400
 
         # Create a new workflow to take advantage of model logic
         new_workflow = Workflow(
             user=user,
             node=check_workflow.node,
-            system=check_workflow.system,
             total_jobs=check_workflow.total_jobs,
             completed_jobs=self.reqargs["completed_jobs"],
             running_jobs=self.reqargs["running_jobs"],
