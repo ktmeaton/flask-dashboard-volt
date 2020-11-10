@@ -136,33 +136,54 @@ class WorkflowByAttrAPI(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument(
-            "node", type=str, required=True, help="No workflow node provided."
+            "system", type=str, required=False, help="No workflow system provided.",
+        )
+        self.reqparse.add_argument(
+            "node", type=str, required=False, help="No workflow node provided."
         )
         self.reqparse.add_argument(
             "total_jobs",
             type=int,
-            required=True,
+            required=False,
             help="No workflow total_jobs provided.",
+        )
+        self.reqparse.add_argument(
+            "completed_jobs",
+            type=int,
+            required=False,
+            help="No workflow completed_jobs provided.",
+        )
+        self.reqparse.add_argument(
+            "running_jobs",
+            type=int,
+            required=False,
+            help="No workflow running_jobs provided.",
+        )
+        self.reqparse.add_argument(
+            "failed_jobs",
+            type=int,
+            required=False,
+            help="No workflow failed_jobs provided.",
         )
         super(WorkflowByAttrAPI, self).__init__()
 
     def get(self):
         """
-       GET a workflow by username, node, and total_jobs.
+       GET a workflow by attribute(s).
        curl -H "Authorization: Bearer $TOKEN"
          http://localhost:5000/api/workflows/attr?node=cedar5&total_jobs=50
        """
         user = token_auth.current_user()
         self.reqargs = self.reqparse.parse_args()
-        check_workflow = (
-            Workflow.query.filter(Workflow.node == self.reqargs["node"])
-            .filter(Workflow.total_jobs == self.reqargs["total_jobs"])
-            .filter(Workflow.user == user)
-            .all()
-        )
-        if len(check_workflow) != 1:
+        filter_attr = {attr: val for attr, val in self.reqargs.items() if val}
+        # If no filtered attributes
+        if len(filter_attr) == 0:
             return 400
-        workflow_dict = check_workflow[0].to_dict()
+        # Otherwise query by attributes
+        check_workflow = (
+            Workflow.query.filter_by(**filter_attr).filter(Workflow.user == user).all()
+        )
+        workflow_dict = {workflow.id: workflow.to_dict() for workflow in check_workflow}
         return {"workflows": workflow_dict}, 200
 
     def put(self):
@@ -177,6 +198,15 @@ class WorkflowByAttrAPI(Resource):
           failed_jobs=0
         """
         user = token_auth.current_user()
+        self.reqparse.add_argument(
+            "node", type=str, required=True, help="No workflow node provided."
+        )
+        self.reqparse.add_argument(
+            "total_jobs",
+            type=int,
+            required=True,
+            help="No workflow total_jobs provided.",
+        )
         self.reqparse.add_argument(
             "completed_jobs",
             type=int,
@@ -244,6 +274,7 @@ class WorkflowListAPI(Resource):
 
     def get(self):
         user = token_auth.current_user()
+        print(user)
         try:
             workflows = user.workflows
         except AttributeError:
