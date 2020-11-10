@@ -25,9 +25,8 @@ class User(db.Model, UserMixin):
     password_hash = Column(String(128))
     remember_me = Column(Boolean, default=False)
     confirmed = Column(Boolean, default=False)
-    registered_on = Column(
-        DateTime, unique=False, index=True, default=datetime.datetime.utcnow
-    )
+    registered_on = Column(DateTime, index=True, default=datetime.datetime.utcnow)
+    last_seen = Column(DateTime, default=datetime.datetime.utcnow)
 
     # Relationships
     workflows = relationship("Workflow", backref="user", lazy="dynamic")
