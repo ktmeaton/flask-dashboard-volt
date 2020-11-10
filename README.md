@@ -122,6 +122,37 @@ git push production
 heroku run --remote production flask db upgrade
 ```
 
+## API
+
+Generate a user API token:
+
+```bash
+curl -X GET -u test https://flowdash-bio-stage.herokuapp.com/api/tokens
+```
+
+Set the token to an environmental variable:
+
+```bash
+export FLOWDASH_BIO_TOKEN=mysupersecrettoken
+```
+
+Use this token in the authorization header for API requests:
+
+```bash
+# get all workflows
+curl -X GET -H "Authorization: Bearer $FLOWDASH_BIO_TOKEN" https://flowdash-bio-stage.herokuapp.com/api/workflows
+
+# get workflow by id
+curl -X GET -H "Authorization: Bearer $FLOWDASH_BIO_TOKEN" https://flowdash-bio-stage.herokuapp.com/api/workflows/id/1
+
+# get workflow by attributes (ex. system)
+curl -X GET -H "Authorization: Bearer $FLOWDASH_BIO_TOKEN" https://flowdash-bio-stage.herokuapp.com/api/workflows/attr?system=Compute+Canada
+
+# update workflow attributes
+curl -X PUT -H "Authorization: Bearer $FLOWDASH_BIO_TOKEN" https://flowdash-bio-stage.herokuapp.com/api/workflows/attr?node=cedar5&total_jobs=50&completed_jobs=40&
+running_jobs=5&failed_jobs=0
+```
+
 ## Credits & Links
 
 - [Flask Framework](https://www.palletsprojects.com/p/flask/) - The offcial website
