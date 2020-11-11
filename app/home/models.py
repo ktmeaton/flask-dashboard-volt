@@ -48,23 +48,8 @@ class Workflow(db.Model):
 
             setattr(self, property, value)
 
-        # Inferred attributes
-        for system in system_map:
-            for node in system_map[system]:
-                if node in self.node:
-                    self.system = system
-
-        self.start_date = datetime.datetime.utcnow()
-        self.progress = int(int(self.completed_jobs) / int(self.total_jobs) * 100)
-        self.status = (
-            "Failed"
-            if int(self.failed_jobs) > 0
-            else ("Completed" if int(self.progress) == 100 else "Running")
-        )
-        if self.progress == 100 or self.status == "Failed":
-            self.end_date = datetime.datetime.utcnow()
-        else:
-            self.end_date = None
+        # Infer the remaining attributes
+        self.update_attr(new_workflow=True)
 
     def __repr__(self):
         return str(self.to_dict())
@@ -87,6 +72,35 @@ class Workflow(db.Model):
         }
         return data
 
-    def end(self):
-        self.end_date = datetime.datetime.utcnow
-        return self.end_date
+    def update_attr(self, data, new_workflow=False):
+        # Add new values if provided
+        for attr in [
+            "node",
+            "total_jobs",
+            "completed_jobs",
+            "running_jobs",
+            "failed_jobs",
+        ]:
+            if attr in data:
+                setattr(self, attr, data[attr])
+        # Set the start date if this is a new workflow
+        if new_workflow:
+            self.start_date = datetime.datetime.utcnow()
+        # Look up the system name based on the node name
+        for system in system_map:
+            for node in system_map[system]:
+                if node in self.node:
+                    self.system = system
+
+        # Update the workflow progress
+        self.progress = int(int(self.completed_jobs) / int(self.total_jobs) * 100)
+        self.status = (
+            "Failed"
+            if int(self.failed_jobs) > 0
+            else ("Completed" if int(self.progress) == 100 else "Running")
+        )
+        # If it's completed or failed, update end date
+        if self.status == "Completed" or self.status == "Failed":
+            self.end_date = datetime.datetime.utcnow()
+        else:
+            self.end_date = None

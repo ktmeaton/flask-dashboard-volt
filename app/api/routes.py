@@ -227,25 +227,18 @@ class WorkflowByAttrAPI(Resource):
             .filter(Workflow.user == user)
             .filter(Workflow.status != "Completed")
             .filter(Workflow.status != "Failed")
-            .all()
+            .first()
         )
 
         # If an existing workflow was found, can't post
-        if len(check_workflow) > 0:
-            return {"message": "Existing workflow found."}, 400
+        if check_workflow:
+            return {"message": "POST request failure, existing workflow found."}, 400
 
         # Create a new workflow to take advantage of model logic
-        Workflow(
-            user=user,
-            node=self.reqargs["node"],
-            total_jobs=self.reqargs["total_jobs"],
-            completed_jobs=self.reqargs["completed_jobs"],
-            running_jobs=self.reqargs["running_jobs"],
-            failed_jobs=self.reqargs["failed_jobs"],
-        )
+        Workflow(**self.reqargs, user=user)
         # Commit new workflow
         db.session.commit()
-        return {"message": "Workflow successfully added."}, 200
+        return {"message": "POST request success, workflow added."}, 200
 
     def put(self):
         """
@@ -292,34 +285,14 @@ class WorkflowByAttrAPI(Resource):
         )
         # If not just one workflow found, return 400
         if not check_workflow:
-            return {"message": "No workflow found."}, 400
+            return {"message": "PUT request failed, no workflow found."}, 400
 
-        # Create a new workflow to take advantage of model logic
-        new_workflow = Workflow(
-            user=user,
-            node=check_workflow.node,
-            total_jobs=check_workflow.total_jobs,
-            completed_jobs=self.reqargs["completed_jobs"],
-            running_jobs=self.reqargs["running_jobs"],
-            failed_jobs=self.reqargs["failed_jobs"],
-            start_date=check_workflow.start_date,
-        )
-        Workflow.query.filter_by(id=check_workflow.id).update(
-            dict(
-                completed_jobs=new_workflow.completed_jobs,
-                running_jobs=new_workflow.running_jobs,
-                failed_jobs=new_workflow.failed_jobs,
-                end_date=new_workflow.end_date,
-                progress=new_workflow.progress,
-                status=new_workflow.status,
-            )
-        )
-        # For some reason, new_workflow gets automatically added. Delete for now.
-        db.session.delete(new_workflow)
-        # Now add only updates
+        # Update the workflow attributes
+        check_workflow.update_attr(**self.reqargs, user=user)
+        # Commit update to database
         db.session.commit()
 
-        return 201
+        return {"message": "PUT request success, workflow updated."}, 201
 
 
 class WorkflowListAPI(Resource):
