@@ -62,6 +62,9 @@ class Config(object):
     # mail accounts
     MAIL_DEFAULT_SENDER = "flowdash.bio@gmail.com"
 
+    # ngrok tunnels
+    START_NGROK = False
+
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -75,6 +78,7 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     DEVELOPMENT = True
+    START_NGROK = True
 
 
 class StagingConfig(Config):

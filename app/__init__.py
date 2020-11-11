@@ -15,7 +15,6 @@ from flask_wtf.csrf import CSRFProtect  # Form security
 from flask_bootstrap import Bootstrap  # Bootstrap WTF Forms
 from flask_jwt_extended import JWTManager  # Web tokens
 
-
 # Naming Convention for SQLite rendering in batch
 naming_convention = {
     "ix": "ix_%(column_0_label)s",
@@ -72,6 +71,5 @@ def create_app(config):
     mail.init_app(app)
     csrf.init_app(app)
     jwt.init_app(app)
-
     Bootstrap(app)
     return app

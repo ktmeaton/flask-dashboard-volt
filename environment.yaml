@@ -21,6 +21,4 @@ dependencies:
   - flask-jwt-extended=3.24.1
   - flask-restful=0.3.8
   - Flask-HTTPAuth=4.1.0
-  - pip=20.2.3
-  - pip:
-    - flask-ngrok==0.0.25
+  - conda-forge::pyngrok=5.0.0

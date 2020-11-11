@@ -10,7 +10,7 @@ from decouple import config
 import os
 from app.home.models import Workflow
 from app.base.models import User
-
+from pyngrok import ngrok
 
 # Load current configuration
 FLASK_ENV = config("FLASK_ENV", default="development")
@@ -28,6 +28,11 @@ else:
 
 # Run the creat config in __init__.py
 app = create_app(app_config)
+
+# Start ngrok if configured
+if app.config["START_NGROK"]:
+    url = ngrok.connect(5000)
+    print(" * Tunnel URL:", url)
 
 # Flask shell session
 @app.shell_context_processor

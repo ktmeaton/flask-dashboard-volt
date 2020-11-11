@@ -77,22 +77,6 @@ def bad_request(message):
 # -----------------------------------------------------------------------------#
 
 
-# @blueprint.route("/tokens", methods=["POST"])
-# @basic_auth.login_required
-# def get_token():
-#    token = basic_auth.current_user().get_token()
-#    db.session.commit()
-#    return jsonify({"token": token})
-
-
-# @blueprint.route("/tokens", methods=["DELETE"])
-# @token_auth.login_required
-# def revoke_token():
-#    token_auth.current_user().revoke_token()
-#    db.session.commit()
-#    return "", 204
-
-
 class TokenAPI(Resource):
     @basic_auth.login_required
     def get(self):
@@ -100,8 +84,11 @@ class TokenAPI(Resource):
         db.session.commit()
         return {"token": token}, 200
 
+    @token_auth.login_required
     def delete(self):
-        pass
+        token_auth.current_user().revoke_token()
+        db.session.commit()
+        return "", 204
 
 
 api.add_resource(TokenAPI, "/tokens", endpoint="tokens")
@@ -111,114 +98,84 @@ api.add_resource(TokenAPI, "/tokens", endpoint="tokens")
 # -----------------------------------------------------------------------------#
 
 
-class WorkflowByIDAPI(Resource):
-    decorators = [token_auth.login_required]
-
-    def get(self, id):
-        """GET a workflow by id."""
-        workflow_dict = Workflow.query.get_or_404(id).to_dict()
-        return {"workflow": workflow_dict}, 200
-
-    def put(self, id):
-        """
-        PUT new attributes into an existing workflow by searching for
-        username, node, and total_jobs.
-        params:
-            node (str):
-            total_jobs (int):
-        """
-        pass
-
-
-class WorkflowByAttrAPI(Resource):
+class WorkflowAPI(Resource):
     decorators = [token_auth.login_required]
 
     def __init__(self):
+        # These are the implemented possible args
+        args_implement = {
+            "id": int,
+            "system": str,
+            "node": str,
+            "total_jobs": int,
+            "completed_jobs": int,
+            "running_jobs": int,
+            "failed_jobs": int,
+        }
+
+        # Parse args from request
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument(
-            "system", type=str, required=False, help="No workflow system provided.",
-        )
-        self.reqparse.add_argument(
-            "node", type=str, required=False, help="No workflow node provided."
-        )
-        self.reqparse.add_argument(
-            "total_jobs",
-            type=int,
-            required=False,
-            help="No workflow total_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "completed_jobs",
-            type=int,
-            required=False,
-            help="No workflow completed_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "running_jobs",
-            type=int,
-            required=False,
-            help="No workflow running_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "failed_jobs",
-            type=int,
-            required=False,
-            help="No workflow failed_jobs provided.",
-        )
-        super(WorkflowByAttrAPI, self).__init__()
+
+        for arg_name, arg_type in args_implement.items():
+            self.reqparse.add_argument(
+                arg_name,
+                type=arg_type,
+                required=False,
+                store_missing=False,
+                help="No workflow {} provided.".format(arg_name),
+            )
+
+        super(WorkflowAPI, self).__init__()
 
     def get(self):
         """
         GET a workflow by attribute(s).
-        curl -H "Authorization: Bearer $TOKEN"
-          http://localhost:5000/api/workflows/attr?node=cedar5&total_jobs=50
+        curl -H "Authorization: Bearer $TOKEN
+        http://localhost:5000/api/workflows?node=cedar5
         """
+
+        # Get the user based on the provided token
         user = token_auth.current_user()
+
+        # Parse the request args setup in init
         self.reqargs = self.reqparse.parse_args()
-        filter_attr = {attr: val for attr, val in self.reqargs.items() if val}
-        # If no filtered attributes
-        if len(filter_attr) == 0:
-            return 400
-        # Otherwise query by attributes
+
+        # Query by supplied attributes
         check_workflow = (
-            Workflow.query.filter_by(**filter_attr).filter(Workflow.user == user).all()
+            Workflow.query.filter_by(**self.reqargs).filter(Workflow.user == user).all()
         )
+
+        # Construct a dictionary with key=workflow id value=workflow
         workflow_dict = {workflow.id: workflow.to_dict() for workflow in check_workflow}
+
+        # Return the workflow dict as json
         return {"workflows": workflow_dict}, 200
 
     def post(self):
         """
         POST a new workflow into the database.
         """
-        user = token_auth.current_user()
-        self.reqparse.add_argument(
-            "node", type=str, required=True, help="No workflow node provided."
-        )
-        self.reqparse.add_argument(
-            "total_jobs",
-            type=int,
-            required=True,
-            help="No workflow total_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "completed_jobs",
-            type=int,
-            required=True,
-            help="No workflow completed_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "running_jobs",
-            type=int,
-            required=True,
-            help="No workflow running_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "failed_jobs",
-            type=int,
-            required=True,
-            help="No workflow failed_jobs provided.",
-        )
+        # These are the required args to create a workflow
+        args_required = {
+            "node": str,
+            "total_jobs": int,
+            "completed_jobs": int,
+            "running_jobs": int,
+            "failed_jobs": int,
+        }
+        # Parse the request args
+        for arg_name, arg_type in args_required.items():
+            self.reqparse.add_argument(
+                arg_name,
+                type=arg_type,
+                required=True,
+                help="No workflow {} provided.".format(arg_name),
+            )
+        # Parse the request args setup in init and here
         self.reqargs = self.reqparse.parse_args()
+
+        # Get the user based on the provided token
+        user = token_auth.current_user()
 
         # Check if the workflow exists or if hasn't completed
         check_workflow = (
@@ -235,7 +192,8 @@ class WorkflowByAttrAPI(Resource):
             return {"message": "POST request failure, existing workflow found."}, 400
 
         # Create a new workflow to take advantage of model logic
-        Workflow(**self.reqargs, user=user)
+        data = self.reqargs
+        Workflow(user=user, **data)
         # Commit new workflow
         db.session.commit()
         return {"message": "POST request success, workflow added."}, 200
@@ -244,35 +202,27 @@ class WorkflowByAttrAPI(Resource):
         """
         PUT new workflow attributes into an existing workflow.
         """
-        user = token_auth.current_user()
-        self.reqparse.add_argument(
-            "node", type=str, required=True, help="No workflow node provided."
-        )
-        self.reqparse.add_argument(
-            "total_jobs",
-            type=int,
-            required=True,
-            help="No workflow total_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "completed_jobs",
-            type=int,
-            required=True,
-            help="No workflow completed_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "running_jobs",
-            type=int,
-            required=True,
-            help="No workflow running_jobs provided.",
-        )
-        self.reqparse.add_argument(
-            "failed_jobs",
-            type=int,
-            required=True,
-            help="No workflow failed_jobs provided.",
-        )
+        # These are the required args to update a workflow
+        args_required = {
+            "node": str,
+            "total_jobs": int,
+            "completed_jobs": int,
+            "running_jobs": int,
+            "failed_jobs": int,
+        }
+        # Parse the request args
+        for arg_name, arg_type in args_required.items():
+            self.reqparse.add_argument(
+                arg_name,
+                type=arg_type,
+                required=True,
+                help="No workflow {} provided.".format(arg_name),
+            )
+        # Parse the request args setup in init and here
         self.reqargs = self.reqparse.parse_args()
+
+        # Get the user based on the provided token
+        user = token_auth.current_user()
 
         # Check the workflow exists
         check_workflow = (
@@ -283,31 +233,17 @@ class WorkflowByAttrAPI(Resource):
             .order_by(Workflow.id.desc())
             .first()
         )
-        # If not just one workflow found, return 400
+        # If no workflow was found, return 400 status code
         if not check_workflow:
             return {"message": "PUT request failed, no workflow found."}, 400
 
         # Update the workflow attributes
-        check_workflow.update_attr(**self.reqargs)
+        data = {"data": self.reqargs}
+        check_workflow.update_attr(**data)
         # Commit update to database
         db.session.commit()
 
         return {"message": "PUT request success, workflow updated."}, 201
 
 
-class WorkflowListAPI(Resource):
-    decorators = [token_auth.login_required]
-
-    def get(self):
-        user = token_auth.current_user()
-        try:
-            workflows = user.workflows
-        except AttributeError:
-            return 401
-        workflows_dict = {workflow.id: workflow.to_dict() for workflow in workflows}
-        return {"workflows": workflows_dict}, 200
-
-
-api.add_resource(WorkflowByIDAPI, "/workflows/id/<int:id>", endpoint="workflow-id")
-api.add_resource(WorkflowByAttrAPI, "/workflows/attr", endpoint="workflow-attr")
-api.add_resource(WorkflowListAPI, "/workflows", endpoint="workflows")
+api.add_resource(WorkflowAPI, "/workflows", endpoint="workflows")
