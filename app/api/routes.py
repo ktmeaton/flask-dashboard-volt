@@ -111,6 +111,8 @@ class WorkflowAPI(Resource):
             "completed_jobs": int,
             "running_jobs": int,
             "failed_jobs": int,
+            "status": str,
+            "progress": int,
         }
 
         # Parse args from request
@@ -229,7 +231,7 @@ class WorkflowAPI(Resource):
             Workflow.query.filter(Workflow.node == self.reqargs["node"])
             .filter(Workflow.total_jobs == self.reqargs["total_jobs"])
             .filter(Workflow.user == user)
-            .filter(Workflow.status == "Running")
+            .filter(Workflow.status.in_(("Running", "Failed")))
             .order_by(Workflow.id.desc())
             .first()
         )
@@ -239,6 +241,7 @@ class WorkflowAPI(Resource):
 
         # Update the workflow attributes
         data = {"data": self.reqargs}
+        print(data)
         check_workflow.update_attr(**data)
         # Commit update to database
         db.session.commit()
