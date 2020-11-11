@@ -288,7 +288,7 @@ class WorkflowByAttrAPI(Resource):
             return {"message": "PUT request failed, no workflow found."}, 400
 
         # Update the workflow attributes
-        check_workflow.update_attr(**self.reqargs, user=user)
+        check_workflow.update_attr(**self.reqargs)
         # Commit update to database
         db.session.commit()
 
@@ -300,7 +300,6 @@ class WorkflowListAPI(Resource):
 
     def get(self):
         user = token_auth.current_user()
-        print(user)
         try:
             workflows = user.workflows
         except AttributeError:

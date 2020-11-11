@@ -49,7 +49,8 @@ class Workflow(db.Model):
             setattr(self, property, value)
 
         # Infer the remaining attributes
-        self.update_attr(new_workflow=True)
+        data = {"data": kwargs}
+        self.update_attr(new_workflow=True, **data)
 
     def __repr__(self):
         return str(self.to_dict())
@@ -72,8 +73,9 @@ class Workflow(db.Model):
         }
         return data
 
-    def update_attr(self, data, new_workflow=False):
+    def update_attr(self, new_workflow=False, **kwargs):
         # Add new values if provided
+        data = kwargs["data"]
         for attr in [
             "node",
             "total_jobs",
