@@ -27,12 +27,14 @@ locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 @login_required
 def index():
     dash_data = DashboardData(current_user)
-    dash_plot_workflow_history = dash_data.plot_workflow_history()
     dash_chart_form = WorkflowChartForm(request.form)
     # Set default chart view to week
     workflow_time_chart = "Week"
     if dash_chart_form.validate_on_submit():
         workflow_time_chart = dash_chart_form.time.data
+    dash_plot_workflow_history = dash_data.plot_workflow_history(
+        time=workflow_time_chart
+    )
 
     return render_template(
         "index.html",

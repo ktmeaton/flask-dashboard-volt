@@ -181,32 +181,39 @@ class DashboardData:
 
     def plot_workflow_history(self, time="week"):
         """Make a json line+marker graph of the workflow history."""
-        if time == "week":
-            print("WEEK")
-            # X-axis will be days since last monday
-            x = self.daily_jobs.keys()
-            y = self.daily_jobs.values()
-            ...
-        elif time == "month":
-            ...
+        if time == "Week":
+            x = list(self.daily_jobs.keys())
+            y = list(self.daily_jobs.values())
+        elif time == "Month":
+            x = list(self.monthly_jobs.keys())
+            y = list(self.monthly_jobs.values())
         else:
             ...
 
+        x.reverse()
+        y.reverse()
+
         df = pd.DataFrame({"x": x, "y": y})  # creating a sample dataframe
 
+        # line_color = (0, 0, 255, 1)
+
         data = [
-            go.Line(
+            go.Scatter(
                 x=df["x"],
                 y=df["y"],
                 mode="lines+markers",
+                marker=dict(size=10, color="rgba(0, 75, 175, 1)",),
                 line=dict(
                     width=3,
-                    # shape = 'spline',
+                    # shape = 'hv',
                 ),
+                fill="tozeroy",
+                fillcolor="rgba(0, 75, 225, 0.1)",
             )
         ]
 
         graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder,)
+        print(graphJSON)
 
         # fig = go.Figure(data)
         # fig.show()
