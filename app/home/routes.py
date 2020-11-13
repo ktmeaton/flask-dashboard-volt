@@ -32,9 +32,7 @@ def index():
     workflow_time_chart = "Week"
     if dash_chart_form.validate_on_submit():
         workflow_time_chart = dash_chart_form.time.data
-    dash_plot_workflow_history = dash_data.plot_workflow_history(
-        time=workflow_time_chart
-    )
+    dash_data.plot_system_share()
 
     return render_template(
         "index.html",
@@ -43,7 +41,6 @@ def index():
         form=dash_chart_form,
         workflow_time_chart=workflow_time_chart,
         dash_data=dash_data,
-        dash_plot_workflow_history=dash_plot_workflow_history,
     )
 
 

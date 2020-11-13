@@ -220,7 +220,28 @@ class DashboardData:
         ]
 
         graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder,)
-        print(graphJSON)
+
+        # fig = go.Figure(data)
+        # fig.show()
+
+        return graphJSON
+
+    def plot_system_share(self):
+        """Make a json donut chart of the system share."""
+        labels = list(self.system_share.keys())
+        values = list(self.system_share.values())
+
+        data = [
+            go.Pie(
+                labels=labels,
+                values=values,
+                hole=0.75,
+                textinfo="none",
+                marker=dict(line=dict(width=4, color="white",)),
+            )
+        ]
+
+        graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder,)
 
         # fig = go.Figure(data)
         # fig.show()

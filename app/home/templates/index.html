@@ -11,6 +11,9 @@
 
         {% include 'includes/navigation.html' %}
 
+    		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+			  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
         <!-- The animated volt logo
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
             <img class="loader-element animate__animated animate__jackInTheBox" src="/static/assets/img/brand/light.svg" height="60" alt="Volt logo">
@@ -59,12 +62,10 @@
                           </div>
                     </div>
                     <div class="card-body p-2">
-    				        		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-										    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-				    						<div class="chart" id="bargraph">
+				    						<div class="chart" id="workflow-history">
 				        				<script>
-					          				var graphs = {{dash_plot_workflow_history | safe}};
-                    				Plotly.plot('bargraph',graphs,{});
+					          				var graphs = {{dash_data.plot_workflow_history(time=workflow_time_chart) | safe}};
+                    				Plotly.plot('workflow-history',graphs,{});
 				        				</script>
 				    						</div>
                     </div>
@@ -77,7 +78,7 @@
                             <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
                                 <div class="icon icon-shape icon-md icon-shape-blue rounded mr-4 mr-sm-0 mb-1"><span class="fas fa-chart-line"></span></div>
                             </div>
-                            <div class="col-12 col-xl-7 px-xl-0">
+                            <div class="col-12 col-xl-7 px-xl-0 text-center">
                                     <h2 class="h5 mb-3">Tracked Jobs</h2>
                                     <h3 class="mb-1">{{ dash_data.tracked_jobs_fmt }}</h3>
                                 <small>{{dash_data.workflow_date_range}}</small>
@@ -87,23 +88,27 @@
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-xl-4 mb-4">
-                <div class="card border-light shadow-sm">
-                    <div class="card-body">
-                        <div class="row d-block d-xl-flex align-items-center">
-                            <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                <div class="ct-chart-system-share ct-series-a">
-                                </div>
-
-                            </div>
-                            <div class="col-12 col-xl-7 px-xl-0">
-                                <h2 class="h5 mb-3">System Share</h2>
-                                {% for system,percent in dash_data.system_share.items() %}
-				<h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-secondary mr-1"><span class="fas fa-desktop"></span></span> {{ system }} <a href="#" class="h6">{{percent}}%</a></h6>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="card border-light shadow-sm text-center">
+                    <div class="card-body"></div>
+				    						<div class="chart" id="plot-system_share">
+				        						<script>
+					          						var graphs = {{dash_data.plot_system_share() | safe}};
+                          			var layout = {
+																	title: "System Share",
+																	font: {size: 18},
+																	legend : {
+																		"orientation" : "h",
+																		font : {
+																			size : 16,
+																			family : "sans-serif"
+																		}
+																	}
+																};
+																var config = {responsive: true}
+																Plotly.plot('plot-system_share', graphs, layout, config);
+				        						</script>
+												</div>
+								</div>
             </div>
         </div>
 
