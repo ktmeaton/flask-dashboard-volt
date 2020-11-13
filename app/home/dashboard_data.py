@@ -3,6 +3,12 @@ from app.home.models import Workflow
 import datetime
 import math
 
+# Plotting
+import plotly
+import plotly.graph_objs as go
+import pandas as pd
+import json
+
 
 class DashboardData:
 
@@ -74,9 +80,11 @@ class DashboardData:
         self.daily_jobs = {}
         # jobs for today are from the beginning of the day until now
         cur = datetime.datetime.utcnow()
+        # Set time to beginning of day
         prev = cur.replace(hour=0, minute=0, second=0, microsecond=0)
         workflows = user.workflows.all()
-        for _i in range(1, 7):
+        count_back_days = prev.weekday() + 2
+        for _i in range(1, count_back_days):
             self.daily_jobs[prev] = 0
             for workflow in workflows:
                 if workflow.start_date >= prev and workflow.start_date < cur:
@@ -170,3 +178,37 @@ class DashboardData:
         return "<DashboardData username: {}; tracked_jobs: {}>".format(
             self.username, self.tracked_jobs
         )
+
+    def plot_workflow_history(self, time="week"):
+        """Make a json line+marker graph of the workflow history."""
+        if time == "week":
+            print("WEEK")
+            # X-axis will be days since last monday
+            x = self.daily_jobs.keys()
+            y = self.daily_jobs.values()
+            ...
+        elif time == "month":
+            ...
+        else:
+            ...
+
+        df = pd.DataFrame({"x": x, "y": y})  # creating a sample dataframe
+
+        data = [
+            go.Line(
+                x=df["x"],
+                y=df["y"],
+                mode="lines+markers",
+                line=dict(
+                    width=3,
+                    # shape = 'spline',
+                ),
+            )
+        ]
+
+        graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder,)
+
+        # fig = go.Figure(data)
+        # fig.show()
+
+        return graphJSON

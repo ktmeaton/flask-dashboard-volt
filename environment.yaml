@@ -22,3 +22,6 @@ dependencies:
   - flask-restful=0.3.8
   - Flask-HTTPAuth=4.1.0
   - conda-forge::pyngrok=5.0.0
+  - plotly=4.12.0
+  - pandas=1.1.3
+  - numpy=1.19.2
