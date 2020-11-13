@@ -25,7 +25,10 @@ class DashboardData:
     weekly_jobs = {}
     month_jobs = {}
     monthly_delta = 0
+
+    this_month_jobs = 0
     last_month_jobs = 0
+    this_week_jobs = 0
     last_week_jobs = 0
 
     def __init__(self, user):
@@ -121,6 +124,8 @@ class DashboardData:
         # Reset time to beginning of day
         cur_week = cur_week.replace(hour=0, minute=0, second=0, microsecond=0)
         cur_week_str = cur_week.strftime("%d %b %Y")
+        self.this_week_jobs = self.weekly_jobs[cur_week_str]
+
         prev_week = cur_week - datetime.timedelta(days=7)
         prev_week_str = prev_week.strftime("%d %b %Y")
         self.last_week_jobs = self.weekly_jobs[prev_week_str]
@@ -158,6 +163,8 @@ class DashboardData:
     def get_monthly_delta(self):
         cur_month = datetime.datetime.utcnow()
         cur_month_str = cur_month.strftime("%b %Y")
+        self.this_month_jobs = self.monthly_jobs[cur_month_str]
+
         prev_month = cur_month.replace(
             month=cur_month.month - 1 if cur_month.month > 1 else 12
         )

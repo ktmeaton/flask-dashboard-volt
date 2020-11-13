@@ -26,7 +26,7 @@
                               <div class="small mt-2">
 														<!-- Monthly Data Header -->
 														{% if workflow_time_chart == "Month" %}
-                              <h2 class="h3">{{dash_data.last_month_jobs}}</h2>
+                              <h2 class="h3">{{dash_data.this_month_jobs}}</h2>
                               <span class="font-weight-bold mr-2">This Month</span>
                               {% if dash_data.month_delta == "Inf" or dash_data.month_delta | int >= 100 %}
                                 <span class="fas fa-angle-up text-success"></span>
@@ -37,14 +37,14 @@
 														  {% endif %}
 														<!-- Weekly Data Header -->
 														{% elif workflow_time_chart == "Week" %}
-                              <h2 class="h3">{{dash_data.last_week_jobs}}</h2>
+                              <h2 class="h3">{{dash_data.this_week_jobs}}</h2>
                               <span class="font-weight-bold mr-2">This Week</span>
                               {% if dash_data.week_delta == "Inf" or dash_data.week_delta | int >= 100 %}
                                 <span class="fas fa-angle-up text-success"></span>
                                 <span class="text-success font-weight-bold">{{ dash_data.week_delta }}%  </span>
                               {% else %}
                                 <span class="fas fa-angle-down text-danger"></span>
-                                <span class="text-danger font-weight-bold">{{ data_data.week_delta }}%  </span>
+                                <span class="text-danger font-weight-bold">{{ dash_data.week_delta }}%  </span>
 														  {% endif %}
 
 														{% endif %}
