@@ -17,25 +17,6 @@
         </div>
         -->
 
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-            <div class="btn-toolbar dropdown">
-                <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="fas fa-plus mr-2"></span>New Task
-                </button>
-                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-tasks"></span>New Task</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cloud-upload-alt"></span>Upload Files</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-user-shield"></span>Preview Security</a>
-                    <div role="separator" class="dropdown-divider"></div>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger"></span>Upgrade to Pro</a>
-                </div>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-primary">Share</button>
-                <button type="button" class="btn btn-sm btn-outline-primary">Export</button>
-            </div>
-        </div>
-
         <div class="row justify-content-md-center">
             <div class="col-12 mb-4">
                 <div class="card bg-white-alt shadow-sm">
@@ -44,14 +25,28 @@
                             <div class="h5 font-weight-normal mb-2">Workflow History</div>
                             <h2 class="h3">{{last_month_jobs}}</h2>
                             <div class="small mt-2">
-                                <span class="font-weight-bold mr-2">This Month</span>
-                                {% if month_delta == "Inf" or month_delta | int >= 100 %}
-                                  <span class="fas fa-angle-up text-success"></span>
-                                  <span class="text-success font-weight-bold">{{ month_delta }}%  </span>
-                                {% else %}
-                                  <span class="fas fa-angle-down text-danger"></span>
-                                  <span class="text-danger font-weight-bold">{{ month_delta }}%  </span>
-                                {% endif %}
+														<!-- Monthly Data Header -->
+														{% if workflow_time_chart == "Month" %}
+                              <span class="font-weight-bold mr-2">This Month</span>
+                              {% if dash_data.month_delta == "Inf" or dash_data.month_delta | int >= 100 %}
+                                <span class="fas fa-angle-up text-success"></span>
+                                <span class="text-success font-weight-bold">{{ dash_data.month_delta }}%  </span>
+                              {% else %}
+                                <span class="fas fa-angle-down text-danger"></span>
+                                <span class="text-danger font-weight-bold">{{ dash_data.month_delta }}%  </span>
+														  {% endif %}
+														<!-- Weekly Data Header -->
+														{% elif workflow_time_chart == "Week" %}
+                              <span class="font-weight-bold mr-2">This Week</span>
+                              {% if dash_data.week_delta == "Inf" or dash_data.week_delta | int >= 100 %}
+                                <span class="fas fa-angle-up text-success"></span>
+                                <span class="text-success font-weight-bold">{{ dash_data.week_delta }}%  </span>
+                              {% else %}
+                                <span class="fas fa-angle-down text-danger"></span>
+                                <span class="text-danger font-weight-bold">{{ data_data.week_delta }}%  </span>
+														  {% endif %}
+
+														{% endif %}
                             </div>
                         </div>
                           <div class="d-flex ml-auto">
@@ -81,9 +76,9 @@
                             <div class="col-12 col-xl-7 px-xl-0">
                                 <div class="d-none d-sm-block">
                                     <h2 class="h5">Tracked Jobs</h2>
-                                    <h3 class="mb-1">{{ tracked_jobs_fmt }}</h3>
+                                    <h3 class="mb-1">{{ dash_data.tracked_jobs_fmt }}</h3>
                                 </div>
-                                <small>{{workflow_date_range}}</small>
+                                <small>{{dash_data.workflow_date_range}}</small>
                             </div>
                         </div>
                     </div>
@@ -100,7 +95,7 @@
                             </div>
                             <div class="col-12 col-xl-7 px-xl-0">
                                 <h2 class="h5 mb-3">System Share</h2>
-                                {% for system,percent in system_share.items() %}
+                                {% for system,percent in dash_data.system_share.items() %}
 				<h6 class="font-weight-normal text-gray"><span class="icon w-20 icon-xs icon-secondary mr-1"><span class="fas fa-desktop"></span></span> {{ system }} <a href="#" class="h6">{{percent}}%</a></h6>
                                 {% endfor %}
                             </div>
@@ -124,7 +119,7 @@
   document.addEventListener("DOMContentLoaded", function(event) {
 
     if(document.querySelector('.ct-chart-system-share')) {
-        var system_share = {{system_share | tojson}}
+        var system_share = {{dash_data.system_share | tojson}}
         var data = {
             series: Object.values(system_share)
           };
@@ -150,7 +145,7 @@
 
   if(d.querySelector('.ct-chart-jobs-week')) {
         // Dates objects are initially unordered
-        const daily_jobs_unordered = {{daily_jobs | tojson}};
+        const daily_jobs_unordered = {{dash_data.daily_jobs | tojson}};
         const daily_jobs = {}
 
         // Sort the date keys in ascending order
@@ -202,7 +197,7 @@
 
   if(d.querySelector('.ct-chart-jobs-month')) {
         // Dates objects are initially unordered
-        const daily_jobs_unordered = {{monthly_jobs | tojson}};
+        const daily_jobs_unordered = {{dash_data.monthly_jobs | tojson}};
         const daily_jobs = {}
         const num_months = 6
 

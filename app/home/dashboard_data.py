@@ -13,11 +13,14 @@ class DashboardData:
     workflow_last = None
     workflow_date_range = None
     month_delta = ""
+    weekly_delta = ""
     system_share = {}
     daily_jobs = {}
+    weekly_jobs = {}
     month_jobs = {}
     monthly_delta = 0
     last_month_jobs = 0
+    last_week_jobs = 0
 
     def __init__(self, user):
         self.get_tracked_jobs(user)
@@ -27,6 +30,8 @@ class DashboardData:
         self.get_daily_jobs(user)
         self.get_monthly_jobs(user)
         self.get_monthly_delta()
+        self.get_weekly_jobs(user)
+        self.get_weekly_delta()
 
     def get_tracked_jobs(self, user):
         # Count workflows, and get date range
@@ -80,12 +85,53 @@ class DashboardData:
             prev = prev - datetime.timedelta(days=1)
         self.daily_jobs = {k.strftime("%b %d"): v for k, v in self.daily_jobs.items()}
 
+    def get_weekly_jobs(self, user):
+        self.weekly_jobs = {}
+        # jobs for the week are counted beginning monday (weekday = 0)
+        # Add 1 day to the current time
+        cur = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        # Reset prev date to last monday
+        prev = cur - datetime.timedelta(days=cur.weekday())
+        # Reset time to beginning of day
+        prev = prev.replace(hour=0, minute=0, second=0, microsecond=0)
+        workflows = user.workflows.all()
+        for _i in range(1, 5):
+            self.weekly_jobs[prev] = 0
+            for workflow in workflows:
+                if workflow.start_date >= prev and workflow.start_date < cur:
+                    self.weekly_jobs[prev] += workflow.total_jobs
+            cur = prev
+            prev = prev - datetime.timedelta(days=7)
+        self.weekly_jobs = {
+            k.strftime("%d %b %Y"): v for k, v in self.weekly_jobs.items()
+        }
+
+    def get_weekly_delta(self):
+        cur_week = datetime.datetime.utcnow()
+        # Reset to last monday
+        cur_week = cur_week - datetime.timedelta(days=cur_week.weekday())
+        # Reset time to beginning of day
+        cur_week = cur_week.replace(hour=0, minute=0, second=0, microsecond=0)
+        cur_week_str = cur_week.strftime("%d %b %Y")
+        prev_week = cur_week - datetime.timedelta(days=7)
+        prev_week_str = prev_week.strftime("%d %b %Y")
+        self.last_week_jobs = self.weekly_jobs[prev_week_str]
+        try:
+            self.week_delta = math.ceil(
+                (self.weekly_jobs[cur_week_str] / self.weekly_jobs[prev_week_str]) * 100
+            )
+
+        except ZeroDivisionError:
+            self.week_delta = "Inf"
+
+        self.week_delta = "{}".format(self.week_delta)
+
     def get_monthly_jobs(self, user):
         self.monthly_jobs = {}
         # jobs for this month are from the beginning of the month
         # Add 1 day to the current time
         cur = datetime.datetime.utcnow() + datetime.timedelta(days=1)
-        prev = cur.replace(day=1, hour=0, minute=0, microsecond=0)
+        prev = cur.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         workflows = user.workflows.all()
         for _i in range(1, 13):
             self.monthly_jobs[prev] = 0

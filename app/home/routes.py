@@ -37,13 +37,14 @@ def index():
         user=current_user,
         form=dash_chart_form,
         workflow_time_chart=workflow_time_chart,
-        last_month_jobs=locale.format("%d", dash_data.last_month_jobs, grouping=True),
-        tracked_jobs_fmt=dash_data.tracked_jobs_fmt,
-        workflow_date_range=dash_data.workflow_date_range,
-        month_delta=dash_data.month_delta,
-        system_share=dash_data.system_share,
-        daily_jobs=dash_data.daily_jobs,
-        monthly_jobs=dash_data.monthly_jobs,
+        dash_data=dash_data,
+        # last_month_jobs=locale.format("%d", dash_data.last_month_jobs, grouping=True),
+        # tracked_jobs_fmt=dash_data.tracked_jobs_fmt,
+        # workflow_date_range=dash_data.workflow_date_range,
+        # month_delta=dash_data.month_delta,
+        # system_share=dash_data.system_share,
+        # daily_jobs=dash_data.daily_jobs,
+        # monthly_jobs=dash_data.monthly_jobs,
     )
 
 
