@@ -3,4 +3,5 @@ system_map = {
     "Infoserv": ["info"],
     "Local": ["DESKTOP"],
     "GH-Actions": ["fv-az"],
+    "Docker": ["docker"],
 }
