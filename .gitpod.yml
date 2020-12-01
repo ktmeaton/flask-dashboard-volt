@@ -1,0 +1,10 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - name: Prepare workspace
+    init: >
+      pip install -r ./requirements.txt
+  - name: Run server
+    command: >
+      flask run
