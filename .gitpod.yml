@@ -1,10 +1,10 @@
-image:
-  file: Dockerfile
-
 tasks:
-  - name: Main
-    command: echo Main terminal.
 
   - name: Flask server
-    command: >
-      flask run
+    init: pip install -r requirements.txt
+    command: flask run
+
+# Ports and opening instructions
+ports:
+  - port: 5000
+    onOpen: open-preview
