@@ -4,10 +4,8 @@
 
 Workflow Dashboard for Bioinformatics
 
-<p float="left" align="middle">
-    <img src="https://raw.githubusercontent.com/ktmeaton/flowdash-bio/master/media/flowdash_bio_dashboard.png" width="100%" />
-    <img src="https://raw.githubusercontent.com/ktmeaton/flowdash-bio/master/media/flowdash_bio_workflows.png" width="100%" />
-</p>
+![home](https://raw.githubusercontent.com/ktmeaton/flowdash-bio/master/media/flowdash_bio_home.png)
+![workflow](https://raw.githubusercontent.com/ktmeaton/flowdash-bio/master/media/flowdash_bio_workflow.png)
 
 ## Run
 
