@@ -4,6 +4,11 @@
 
 Workflow Dashboard for Bioinformatics
 
+<p float="left" align="middle">
+    <img src="https://raw.githubusercontent.com/ktmeaton/flowdash-bio/master/media/flowdash_bio_dashboard.png" width="100%" />
+    <img src="https://raw.githubusercontent.com/ktmeaton/flowdash-bio/master/media/flowdash_bio_workflows.png" width="100%" />
+</p>
+
 ## Run
 
 ```bash
